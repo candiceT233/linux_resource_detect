@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# user="user"
-user="candicet233"
+user="$USER"
 
 # Initialize an associative array to store unique parent directories
 declare -A directories
@@ -18,13 +17,9 @@ while IFS= read -r -d '' dir; do
     # Store the parent directory path in the associative array to ensure uniqueness
     directories["$parent_dir"]=1
     let loop_count++
-done < <(find / -maxdepth 2 -type d -group $user -print0 2>/dev/null)
+done < <(find / -maxdepth 2 -type d -user $user -print0 2>/dev/null)
 echo "path checked: $loop_count"
 
-# # Print the unique parent directory paths
-# for path in "${!directories[@]}"; do
-#     echo "$path"
-# done
 
 
 # List Storage Type and Storage Space of paths in directories
@@ -34,13 +29,9 @@ header="Filesystem, Type, Size, Used, Avail, Use%, Mounted on, Path, Access Mode
 for path in "${!directories[@]}"; do
 
     general_info="$(df -Th "$path" | awk 'NR==2' | awk -F '[[:space:]]+' '{OFS=","; $1=$1}1')"
-    # general_info=$(df -Th "$path" | awk 'NR==2')
     access_mode=$(stat -c "%a" "$path")
-    # access_right=$(stat -c "%A" "$path" | awk -F '[[:space:]]+' '{OFS=","; $1=$1}1')
     access_right=$(stat -c "%A" "$path")
-    # all_info=$(echo "$general_info $path $access_mode $access_right" | awk -F '[[:space:]]+' '{OFS=","; $1=$1}1')
     directories_info["$path"]="$general_info, $path, $access_mode, $access_right"
-    # directories_info["$path"]="$all_info"
 done
 
 echo "$header"
