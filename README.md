@@ -1,0 +1,1 @@
+# linux_resource_detect
