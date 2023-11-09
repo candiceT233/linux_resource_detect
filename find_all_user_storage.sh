@@ -3,7 +3,16 @@
 # Default values
 LOG_LEVEL=1
 CHECK_USER="$USER"
-USER_DATA_FILE=""
+DIR_CONFIG_FILE="dir_config.txt"
+
+# Function to print usage
+PRINT_USAGE () {
+    echo "Usage: $0 [-u <user name>] [-log <log level>] [-f <user data file>]"
+    echo "Options:"
+    echo "  -u, --user        User name to check, default is current user"
+    echo "  -log, --log-level Log level: 0 - minimal log, 1 - full log, default is 1"
+    echo "  -o, --output        File with all detected user storage paths"
+}
 
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -23,10 +32,14 @@ while [[ $# -gt 0 ]]; do
             shift # past argument
             shift # past value
             ;;
-        -f|--file)
-            USER_DATA_FILE="$2"
+        -o|--output)
+            DIR_CONFIG_FILE="$2"
             shift # past argument
             shift # past value
+            ;;
+        -h|--help)
+            PRINT_USAGE
+            exit 0
             ;;
         *)
             # unknown option
@@ -36,14 +49,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Function to print usage
-PRINT_USAGE () {
-    echo "Usage: $0 [-u <user name>] [-log <log level>] [-f <user data file>]"
-    echo "Options:"
-    echo "  -u, --user        User name to check, default is current user"
-    echo "  -log, --log-level Log level: 0 - minimal log, 1 - full log, default is 1"
-    echo "  -f, --file        File with a list of user data paths, default is none"
-}
+
 
 # Check if LOG_LEVEL is not a number
 if ! [[ "$LOG_LEVEL" =~ ^[0-9]+$ ]]; then
@@ -54,8 +60,7 @@ fi
 
 echo "LOG_LEVEL: $LOG_LEVEL"
 echo "CHECK_USER: $CHECK_USER"
-echo "USER_DATA_FILE: $USER_DATA_FILE"
-
+echo "DIR_CONFIG_FILE: $DIR_CONFIG_FILE"
 CHECK_GROUP="users"
 
 
@@ -183,9 +188,13 @@ COMMENT
         bytes_size=64K # 4K, 64K or 1M
         # sar -d $dir
         # Test write latency and bandwidth
-        write_stats["$dir"]="$(dd if=/dev/zero of=$dir/testfile bs=$bytes_size count=1000 oflag=dsync 2>&1 | tail -n 1 | cut -d ',' -f 3-)"
+        write_stats["$dir"]="$(dd if=/dev/zero of=$dir/testfile bs=$bytes_size count=1000 oflag=dsync 2>&1 | tail -n 1 | cut -d ',' -f 2-)"
         # Test read latency and bandwidth
-        read_stats["$dir"]="$(dd if=$dir/testfile of=/dev/null bs=$bytes_size count=1000 iflag=dsync 2>&1 | tail -n 1 | cut -d ',' -f 3-)"
+        read_stats["$dir"]="$(dd if=$dir/testfile of=/dev/null bs=$bytes_size count=1000 iflag=dsync 2>&1 | tail -n 1 | cut -d ',' -f 2-)"
+
+        # write_stats["$dir"]="$(dd if=/dev/zero of=$dir/testfile bs=$bytes_size count=1000 oflag=dsync 2>&1 )"
+        # read_stats["$dir"]="$(dd if=$dir/testfile of=/dev/null bs=$bytes_size count=1000 iflag=dsync 2>&1 )"
+
 
         # clean up
         rm -rf $dir/testfile
@@ -208,13 +217,13 @@ COMMENT
 # List Storage Type and Storage Space of paths in directories
 LIST_ALL_INFO (){
 
-    [ $LOG_LEVEL -eq 1 ] && echo "Listing all directories info ..."
+    
 
     declare -A directories_info
-    header="Actual_Path,Filesystem,Type,Size,Used,Avail,Use%,Mounted_on,Mode,Access_Right,Read_Latency,Read_Bandwidth,Write_Latency,Write_Bandwidth"
+    header="Actual_Path,Filesystem,Type,Size,Used,Avail_KB,Use%,Mounted_on,Mode,Access_Right,Read_Latency,Read_Bandwidth,Write_Latency,Write_Bandwidth"
     for path in "${!all_directories[@]}"; do
 
-        general_info="$(df -Th "$path" | awk 'NR==2' | awk -F '[[:space:]]+' '{OFS=","; $1=$1}1')"
+        general_info="$(df -T "$path" | awk 'NR==2' | awk -F '[[:space:]]+' '{OFS=","; $1=$1}1')"
         access_mode=$(stat -c "%a" "$path")
         access_right=$(stat -c "%A" "$path")
         read_latency=`echo "${read_stats["$path"]}" | cut -d ',' -f 1`
@@ -235,4 +244,5 @@ LIST_ALL_INFO (){
 
 TEST_DIR_BW
 
-LIST_ALL_INFO
+[ $LOG_LEVEL -eq 1 ] && echo "Listing all directories info ..." && LIST_ALL_INFO | tee "$DIR_CONFIG_FILE"
+
