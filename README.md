@@ -23,8 +23,11 @@ Options:
   -h, --help: Display this help and exit
 ```
 
-- Currently it is using "Write_Bandwidth" as a selector for target
-- Currently the data transfer performance cost only collects movement time and calculated the bandwidth
+## Assumptions
+Currently the `move_data_to_target.sh` has the below limitation:
+- Check constraints of the destination storage and only choose from storage that is larger than the total user data size
+- Hardcoded to use "Write_Bandwidth" as a selector for destination storage
+- Data transfer cost only collects duration time and calculated the bandwidth
 
 
 
