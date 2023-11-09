@@ -3,7 +3,7 @@
 # Default values
 LOG_LEVEL=1
 DEST_FILES="dest_data_list.txt"
-
+MODE=1
 # Function to display usage instructions
 usage() {
   echo "Usage: $0 [-c|--conf <CURR_STORAGE_CONF>] [-d|--data <USER_DATA_LIST>] [-l|--log-level <LOG_LEVEL>]"
@@ -11,6 +11,7 @@ usage() {
   echo "  -c, --conf <CURR_STORAGE_CONF>: Path to the current storage configuration file."
   echo "  -d, --data <USER_DATA_LIST>: Path to the file containing absolute user data file paths."
   echo "  -l, --log-level <LOG_LEVEL>: Log level: 0 - minimal log, 1 - full log, default is 1"
+  echo "  -m, --mode <MODE>: Mode: 0 - not restore user data, 1 - restore user data, default is 1"
   echo "  -h, --help: Display this help and exit"
   exit 1
 }
@@ -69,6 +70,11 @@ echo "Current storage config file: $CURR_STORAGE_CONF"
 echo "User data path list file: $USER_DATA_LIST"
 echo "LOG_LEVEL: $LOG_LEVEL"
 echo "DEST_FILES: $DEST_FILES"
+if [ $MODE -eq 1 ]; then
+    echo "MODE: $MODE, restore user data"
+else
+    echo "MODE: $MODE, not restore user data"
+fi
 echo "-------------------------------------"
 
 
@@ -348,4 +354,6 @@ restore_data(){
     done
 }
 
-restore_data
+if [ $MODE -eq 1 ]; then
+    restore_data
+fi
