@@ -23,6 +23,9 @@ Options:
   -h, --help: Display this help and exit
 ```
 
+- Currently it is using "Write_Bandwidth" as a selector for target
+- Currently the data transfer performance cost only collects movement time and calculated the bandwidth
+
 
 
 #### Notes
