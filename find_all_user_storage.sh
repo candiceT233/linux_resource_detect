@@ -12,6 +12,7 @@ PRINT_USAGE () {
     echo "  -u, --user        User name to check, default is current user"
     echo "  -log, --log-level Log level: 0 - minimal log, 1 - full log, default is 1"
     echo "  -o, --output        File with all detected user storage paths"
+    echo "  -h, --help        Display this help and exit"
 }
 
 while [[ $# -gt 0 ]]; do
@@ -61,6 +62,7 @@ fi
 echo "LOG_LEVEL: $LOG_LEVEL"
 echo "CHECK_USER: $CHECK_USER"
 echo "DIR_CONFIG_FILE: $DIR_CONFIG_FILE"
+echo "-------------------------------------"
 CHECK_GROUP="users"
 
 
