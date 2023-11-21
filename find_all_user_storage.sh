@@ -82,27 +82,42 @@ all_directories["$user_home"]=1
 start_time="$(date -u +%s.%N)"
 loop_count=0 # Track searching overhead
 
-while IFS= read -r -d '' dir; do
-    # Extract the parent directory (up to the second level)
-    parent_dir="$(dirname "$dir")"
-    # Extract the group access permission of the directory
-    write_perm="$(stat -c "%A" $parent_dir | cut -c 6)"
-    if [ "$write_perm" == "w" ]; then
-        all_directories["$parent_dir"]=1
-    fi
-
-    let loop_count++
-done < <(find / -maxdepth 2 -type d -group "$CHECK_GROUP" -print0 2>/dev/null)
-
-while IFS= read -r -d '' dir; do
-	# Extract the group access permission of the directory
-    write_perm="$(stat -c "%A" $dir 2>/dev/null | cut -c 6)"
-    if [ "$write_perm" == "w" ]; then
+# find all root directories
+while IFS= read -r dir; do
+    is_dir="$(stat -c "%A" "$dir" 2>/dev/null| cut -c 1)"
+    write_perm="$(stat -c "%A" "$dir" 2>/dev/null| cut -c 6)"
+    if [ "$is_dir" == "d" ] && [ "$write_perm" == "w" ]; then
+        if [ "$LOG_LEVEL" -eq 1 ]; then echo "adding root: $dir"; fi
         all_directories["$dir"]=1
     fi
 
     let loop_count++
-done < <(find / -maxdepth 2 -type d -user "$CHECK_USER" -print0 2>/dev/null)
+
+done < <(find / -maxdepth 1)
+
+# while IFS= read -r -d '' dir; do
+#     # Extract the parent directory (up to the second level)
+#     parent_dir="$(dirname "$dir")"
+#     # Extract the group access permission of the directory
+#     write_perm="$(stat -c "%A" $dir | cut -c 6)"
+#     if [ "$write_perm" == "w" ]; then
+#         if [ "$LOG_LEVEL" -eq 1 ]; then echo "adding root: $dir"; fi
+#         all_directories["$parent_dir"]=1
+#     fi
+
+#     let loop_count++
+# done < <(find / -maxdepth 2 -type d -group "$CHECK_GROUP" -print0 2>/dev/null)
+
+# while IFS= read -r -d '' dir; do
+# 	# Extract the group access permission of the directory
+#     write_perm="$(stat -c "%A" $dir 2>/dev/null | cut -c 6)"
+#     if [ "$write_perm" == "w" ]; then
+#         if [ "$LOG_LEVEL" -eq 1 ]; then echo "adding root: $dir"; fi
+#         all_directories["$dir"]=1
+#     fi
+
+#     let loop_count++
+# done < <(find / -maxdepth 2 -type d -user "$CHECK_USER" -print0 2>/dev/null)
 
 # calculate duration in milliseconds
 duration=$(echo "$(date -u +%s.%N) - $start_time" | bc)
@@ -133,37 +148,40 @@ done < <(findmnt --noheadings --list | grep -Ev "$exclude_pattern" | cut -d ' ' 
 
 # Check for user access not group access
 for mnt_dir in "${!mnt_directories[@]}"; do
-        # Extract the group access permission of the directory
-        write_perm="$(stat -c "%A" "$mnt_dir" | cut -c 6)"
-        if [ "$write_perm" == "w" ]; then
-        	if [ "$LOG_LEVEL" -eq 1 ]; then echo "adding mnt_dir: $mnt_dir"; fi
-		all_directories["$mnt_dir"]=1
-        fi
+    # Extract the group access permission of the directory
+    write_perm="$(stat -c "%A" "$mnt_dir" 2>/dev/null| cut -c 6)"
+    if [ "$write_perm" == "w" ]; then
+        if [ "$LOG_LEVEL" -eq 1 ]; then echo "adding mnt_dir: $mnt_dir"; fi
+        all_directories["$mnt_dir"]=1
+    fi
+
     while IFS= read -r -d '' dir; do
-	parent_dir="$(dirname "$dir")"
+	    # parent_dir="$(dirname "$dir")"
         # Extract the group access permission of the directory
-        write_perm="$(stat -c "%A" "$dir" | cut -c 3)" # the owner is the user
+        write_perm="$(stat -c "%A" "$dir" 2>/dev/null| cut -c 3)" # the owner is the user
         if [ "$write_perm" == "w" ]; then
-        	if [ "$LOG_LEVEL" -eq 1 ]; then echo "adding user dir: $parent_dir"; fi
-		all_directories["$parent_dir"]=1
+        	if [ "$LOG_LEVEL" -eq 1 ]; then echo "adding user dir: $dir"; fi
+		    all_directories["$dir"]=1
+            break
         fi
 
         let loop_count++
     done < <(find $mnt_dir -maxdepth 2 -type d -user "$CHECK_USER" -print0 2>/dev/null)
 done
 
-# add mount directory with correct group access
-for mnt_dir in "${!mnt_directories[@]}"; do
+# # add mount directory with correct group access
+# for mnt_dir in "${!mnt_directories[@]}"; do
 
-    # Extract the group access permission of the directory
-    # if [ "$LOG_LEVEL" -eq 1 ]; then echo "checking mnt_dir: $mnt_dir"; fi
-    write_perm="$(stat -c "%A" "$dir" 2>/dev/null | cut -c 6)"
-    if [ "$write_perm" == "w" ]; then
-        all_directories["$mnt_dir"]=1
-    fi
+#     # Extract the group access permission of the directory
+#     # if [ "$LOG_LEVEL" -eq 1 ]; then echo "checking mnt_dir: $mnt_dir"; fi
+#     write_perm="$(stat -c "%A" "$dir" 2>/dev/null | cut -c 6)"
+#     if [ "$write_perm" == "w" ]; then
+#         all_directories["$mnt_dir"]=1
+#     fi
 
-    let loop_count++
-done
+#     let loop_count++
+# done
+
 duration=$(echo "$(date -u +%s.%N) - $start_time" | bc)
 duration_seconds=$(echo "$(date -u +%s.%N) - $start_time" | bc)
 duration_ms=$(printf "%.0f" "$(echo "$duration_seconds * 1000" | bc -l)")
