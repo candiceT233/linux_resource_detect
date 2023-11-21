@@ -128,29 +128,26 @@ done < <(findmnt --noheadings --list | grep -Ev "$exclude_pattern" | cut -d ' ' 
 for mnt_dir in "${!mnt_directories[@]}"; do
     # echo "mnt_directories $mnt_dir"
     while IFS= read -r -d '' dir; do
-        # Extract the group access mode of the directory
-        acc_mode="$(stat -c "%a" "$dir")"
-        group_acc_mode="${acc_mode:2:1}"
-        group_acc_mode=$((10#$group_acc_mode))
 
-        if [ "$group_acc_mode" -gt 4 ]; then
-            # echo "checking $dir"
-            parent_dir="$(dirname "$dir")"
+        # Extract the group access permission of the directory
+        write_perm="$(stat -c "%A" $parent_dir | cut -c 6)"
+        if [ "$write_perm" == "w" ]; then
             all_directories["$parent_dir"]=1
         fi
+
         let loop_count++
     done < <(find $mnt_dir -maxdepth 2 -type d -user "$CHECK_USER" -print0 2>/dev/null)
 done
 
 # add mount directory with correct group access
 for mnt_dir in "${!mnt_directories[@]}"; do
-    # Extract the group access mode of the directory
-    acc_mode="$(stat -c "%a" "$mnt_dir")"
-    group_acc_mode="${acc_mode:2:1}"
-    group_acc_mode=$((10#$group_acc_mode))
-    if [ "$group_acc_mode" -gt 5 ]; then
+
+    # Extract the group access permission of the directory
+    write_perm="$(stat -c "%A" $mnt_dir | cut -c 6)"
+    if [ "$write_perm" == "w" ]; then
         all_directories["$mnt_dir"]=1
     fi
+
     let loop_count++
 done
 duration=$(echo "$(date -u +%s.%N) - $start_time" | bc)
