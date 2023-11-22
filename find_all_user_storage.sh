@@ -95,30 +95,6 @@ while IFS= read -r dir; do
 
 done < <(find / -maxdepth 1)
 
-# while IFS= read -r -d '' dir; do
-#     # Extract the parent directory (up to the second level)
-#     parent_dir="$(dirname "$dir")"
-#     # Extract the group access permission of the directory
-#     write_perm="$(stat -c "%A" $dir | cut -c 6)"
-#     if [ "$write_perm" == "w" ]; then
-#         if [ "$LOG_LEVEL" -eq 1 ]; then echo "adding root: $dir"; fi
-#         all_directories["$parent_dir"]=1
-#     fi
-
-#     let loop_count++
-# done < <(find / -maxdepth 2 -type d -group "$CHECK_GROUP" -print0 2>/dev/null)
-
-# while IFS= read -r -d '' dir; do
-# 	# Extract the group access permission of the directory
-#     write_perm="$(stat -c "%A" $dir 2>/dev/null | cut -c 6)"
-#     if [ "$write_perm" == "w" ]; then
-#         if [ "$LOG_LEVEL" -eq 1 ]; then echo "adding root: $dir"; fi
-#         all_directories["$dir"]=1
-#     fi
-
-#     let loop_count++
-# done < <(find / -maxdepth 2 -type d -user "$CHECK_USER" -print0 2>/dev/null)
-
 # calculate duration in milliseconds
 duration=$(echo "$(date -u +%s.%N) - $start_time" | bc)
 # Calculate the duration in seconds
@@ -168,19 +144,6 @@ for mnt_dir in "${!mnt_directories[@]}"; do
         let loop_count++
     done < <(find $mnt_dir -maxdepth 2 -type d -user "$CHECK_USER" -print0 2>/dev/null)
 done
-
-# # add mount directory with correct group access
-# for mnt_dir in "${!mnt_directories[@]}"; do
-
-#     # Extract the group access permission of the directory
-#     # if [ "$LOG_LEVEL" -eq 1 ]; then echo "checking mnt_dir: $mnt_dir"; fi
-#     write_perm="$(stat -c "%A" "$dir" 2>/dev/null | cut -c 6)"
-#     if [ "$write_perm" == "w" ]; then
-#         all_directories["$mnt_dir"]=1
-#     fi
-
-#     let loop_count++
-# done
 
 duration=$(echo "$(date -u +%s.%N) - $start_time" | bc)
 duration_seconds=$(echo "$(date -u +%s.%N) - $start_time" | bc)
