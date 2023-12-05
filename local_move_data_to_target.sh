@@ -1,72 +1,43 @@
 #!/bin/bash
 
 # Default values
-LOG_LEVEL=1
 DEST_FILES="dest_data_list.txt"
-MODE=1
+DIR_CONFIG_FILE="$1"
+USER_DATA_LIST="$2"
+
+if [ $# -eq 3 ]; then
+    MODE="$3"
+else
+    MODE=1
+fi
+
+if [ $# -eq 4 ]; then
+    LOG_LEVEL="$4"
+else
+    LOG_LEVEL=1
+fi
+
 # Function to display usage instructions
 usage() {
-  echo "Usage: $0 [-c|--conf <CURR_STORAGE_CONF>] [-d|--data <USER_DATA_LIST>] [-l|--log-level <LOG_LEVEL>]"
+  echo "Usage: $0 <DIR_CONFIG_FILE> <USER_DATA_LIST> [MODE] [LOG_LEVEL]"
   echo "Options:"
-  echo "  -c, --conf <CURR_STORAGE_CONF>: Path to the current storage configuration file."
-  echo "  -d, --data <USER_DATA_LIST>: Path to the file containing absolute user data file paths."
-  echo "  -l, --log-level <LOG_LEVEL>: Log level: 0 - minimal log, 1 - full log, default is 1"
-  echo "  -m, --mode <MODE>: Mode: 0 - not restore user data, 1 - restore user data, default is 1"
-  echo "  -h, --help: Display this help and exit"
-  exit 1
+  echo "  <DIR_CONFIG_FILE>   Path to the directory configuration file."
+  echo "  <USER_DATA_LIST>    Path to the user data list file."
+  echo "  [MODE]              Mode (0 - do not restore user data, 1 - restore user data, default: 1 for testing)."
+  echo "  [LOG_LEVEL]         Log level (0 - minimal log, 1 - full log, default: 1)."
 }
 
-# Function to check input options
-check_input() {
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case $key in
-      -c|--conf)
-        CURR_STORAGE_CONF="$2"
-        shift 2
-        ;;
-      -d|--data)
-        USER_DATA_LIST="$2"
-        shift 2
-        ;;
-      -l|--log-level)
-        LOG_LEVEL="$2"
-        shift 2
-        ;;
-      -h|--help)
-        usage
-        ;;
-      *)
-        echo "Unknown option: $key" >&2
-        usage
-        ;;
-    esac
-  done
-
-  # Check if both options are provided
-  if [ -z "$CURR_STORAGE_CONF" ] || [ -z "$USER_DATA_LIST" ]; then
-    echo "Both -c or --conf and -d or --data options are required."
+# If incorrect number of args, print usage and exit
+if [ $# -ne 2 ]; then
     usage
-  fi
+    exit 1
+fi
 
-  # Check if files exist
-  if [ ! -f "$CURR_STORAGE_CONF" ]; then
-    echo "Error: Current storage configuration file '$CURR_STORAGE_CONF' does not exist."
-    usage
-  fi
-
-  if [ ! -f "$USER_DATA_LIST" ]; then
-    echo "Error: User data path list file '$USER_DATA_LIST' does not exist."
-    usage
-  fi
-}
+exit 0
 
 # Main script
 
-# Check input options
-check_input "$@"
-
-echo "Current storage config file: $CURR_STORAGE_CONF"
+echo "Current storage config file: $DIR_CONFIG_FILE"
 echo "User data path list file: $USER_DATA_LIST"
 echo "LOG_LEVEL: $LOG_LEVEL"
 echo "DEST_FILES: $DEST_FILES"
@@ -145,7 +116,7 @@ done
 # ---- Parsing discovered storage configs
 
 # Read the first line (header)
-IFS=, read -r first_line < "$CURR_STORAGE_CONF"
+IFS=, read -r first_line < "$DIR_CONFIG_FILE"
 # Split the line into an array using , as the delimiter
 IFS=',' read -ra header <<< "$first_line"
 
@@ -194,7 +165,7 @@ do
 
 
 done
-} < "$CURR_STORAGE_CONF"
+} < "$DIR_CONFIG_FILE"
 
 
 # PRINT_CONFIG
