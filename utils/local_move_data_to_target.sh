@@ -4,36 +4,25 @@
 DEST_FILES="dest_data_list.txt"
 DIR_CONFIG_FILE="$1"
 USER_DATA_LIST="$2"
+MODE="$3"
+LOG_LEVEL="$4"
 
-if [ $# -eq 3 ]; then
-    MODE="$3"
-else
-    MODE=1
-fi
-
-if [ $# -eq 4 ]; then
-    LOG_LEVEL="$4"
-else
-    LOG_LEVEL=1
-fi
 
 # Function to display usage instructions
 usage() {
-  echo "Usage: $0 <DIR_CONFIG_FILE> <USER_DATA_LIST> [MODE] [LOG_LEVEL]"
+  echo "Usage: $0 <DIR_CONFIG_FILE> <USER_DATA_LIST> <MODE> <LOG_LEVEL>"
   echo "Options:"
   echo "  <DIR_CONFIG_FILE>   Path to the directory configuration file."
   echo "  <USER_DATA_LIST>    Path to the user data list file."
-  echo "  [MODE]              Mode (0 - do not restore user data, 1 - restore user data, default: 1 for testing)."
-  echo "  [LOG_LEVEL]         Log level (0 - minimal log, 1 - full log, default: 1)."
+  echo "  <MODE>              Mode (0 - do not restore user data, 1 - restore user data, default: 1 for testing)."
+  echo "  <LOG_LEVEL>         Log level (0 - minimal log, 1 - full log, default: 1)."
 }
 
 # If incorrect number of args, print usage and exit
-if [ $# -ne 2 ]; then
+if [ $# -ne 4 ]; then
     usage
     exit 1
 fi
-
-exit 0
 
 # Main script
 
@@ -96,11 +85,14 @@ user_file_list=()
 
 while IFS=, read -r file_path
 do
+    # Evaluate the file path to resolve environment variables
+    eval "resolved_path=$file_path"
+
     # if file exist, echo
-    if [ -f "$file_path" ]; then
-        user_file_list+=("$file_path")
+    if [ -f "$resolved_path" ]; then
+        user_file_list+=("$resolved_path")
     else
-        echo "Error: $file_path does not exist, not added."
+        echo "Error: $resolved_path does not exist, not added."
         continue
     fi
 done < "$USER_DATA_LIST"
@@ -318,7 +310,7 @@ restore_data(){
             mv "$full_dest_file" "$full_data_path"
             end_time=$(date +%s.%N)
             echo "Restored $full_dest_file to $full_data_path in $(echo "$end_time - $start_time" | bc) seconds"
-            [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
+            [ $LOG_LEVEL -eq 1 ] &&  ls $full_dest_file > /dev/null 2>&1 && echo "$data_file restored failed" || echo "$data_file restored successfully"
         else
             echo "Error: $full_dest_file does not exist"
         fi
