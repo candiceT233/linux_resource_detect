@@ -107,6 +107,12 @@ DIR_CONFIG_FILE="${REMOTE_SERVER}_${DIR_CONFIG_FILE}"
 
 # Check valid access
 CHECK_SSH_ACCESS () {
+    # Check if the identity file exists
+    if [ ! -z "$IDENTITY_FILE" ] && [ ! -f "$IDENTITY_FILE" ]; then
+        echo "Error: identity file [$IDENTITY_FILE] does not exist"
+        PRINT_USAGE
+        exit 1
+    fi
 
     # Test SSH access
     echo "Testing SSH access to $remote_server_login..."
@@ -141,12 +147,10 @@ echo "-------------------------------------"
 
 # Local script path
 local_script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+resource_detector_script="$local_script_path/utils/resource_detection.sh" # absolute path to resource_detection.sh
+
 
 EXECUTE_RESOURCE_DETECTION () {
-
-
-    # echo "local_script_path: $local_script_path"
-    resource_detector_script="utils/resource_detection.sh" # relative path to the script
 
     # check if resource_detector script exists
     if [ ! -f "$resource_detector_script" ]; then
@@ -154,21 +158,28 @@ EXECUTE_RESOURCE_DETECTION () {
         exit 1
     fi
 
-
     if [ "$REMOTE_SERVER" != "local" ]; then
         echo "Checking remote server storage..."
 
-        
         echo "Executing [$resource_detector_script] at [$remote_server_login]..."
         # Execute the remote script via SSH
         if [ ! -z "$IDENTITY_FILE" ]; then
-            ssh -i "$IDENTITY_FILE" $remote_server_login 'bash -s' < "$local_script_path/$resource_detector_script" "$LOG_LEVEL" "$CHECK_USER" "$DIR_CONFIG_FILE"
+            ssh -i "$IDENTITY_FILE" $remote_server_login 'bash -s' < "$resource_detector_script" "$LOG_LEVEL" "$CHECK_USER" "$DIR_CONFIG_FILE"
         else
-            ssh $remote_server_login 'bash -s' < "$local_script_path/$resource_detector_script" "$LOG_LEVEL" "$CHECK_USER" "$DIR_CONFIG_FILE"
+            ssh $remote_server_login 'bash -s' < "$resource_detector_script" "$LOG_LEVEL" "$CHECK_USER" "$DIR_CONFIG_FILE"
         fi
+
+        # Collect the output DIR_CONFIG_FILE back to the local machine
+        echo "Collect the output [$DIR_CONFIG_FILE] back to the local machine..."
+        if [ ! -z "$IDENTITY_FILE" ]; then
+            scp -i "$IDENTITY_FILE" "$remote_server_login:$HOME/$DIR_CONFIG_FILE" "$local_script_path"
+        else
+            scp "$remote_server_login:$HOME/$DIR_CONFIG_FILE" "$local_script_path"
+        fi
+
     else
         echo "Checking local server storage..."
-        bash "$local_script_path/$resource_detector_script" "$LOG_LEVEL" "$CHECK_USER" "$DIR_CONFIG_FILE"
+        bash "$resource_detector_script" "$LOG_LEVEL" "$CHECK_USER" "$DIR_CONFIG_FILE"
     fi
 
 }
@@ -178,20 +189,12 @@ if [ -f "$DIR_CONFIG_FILE" ] && [ -s "$DIR_CONFIG_FILE" ]; then
     echo "Skipping resource detection..."
 else
     EXECUTE_RESOURCE_DETECTION
-
-    # Collect the output DIR_CONFIG_FILE back to the local machine
-    echo "Collect the output [$DIR_CONFIG_FILE] back to the local machine..."
-    if [ ! -z "$IDENTITY_FILE" ]; then
-        scp -i "$IDENTITY_FILE" "$remote_server_login:$HOME/$DIR_CONFIG_FILE" "$local_script_path"
-    else
-        scp "$remote_server_login:$HOME/$DIR_CONFIG_FILE" "$local_script_path"
-    fi
 fi
 
 
 # Show the output file
 echo "-------------------------------------"
-echo "Output file: $local_script_path/$DIR_CONFIG_FILE"
+echo "Storage Resource File: $local_script_path/$DIR_CONFIG_FILE"
 cat "$local_script_path/$DIR_CONFIG_FILE"
 echo "-------------------------------------"
 
@@ -237,9 +240,19 @@ CHECK_DATA_TRANSFER_INPUT() {
 
 }
 
+local_transfer_script="$local_script_path/utils/local_move_data_to_target.sh" # absolute path to local_data_transfer.sh
+remote_transfer_script="$local_script_path/utils/remote_move_data_to_target.sh" # absolute path to remote_data_transfer.sh
+
 EXECUTE_DATA_TRANSFER (){
     echo "Executing data transfer..."
-
+    
+    if [ "$REMOTE_SERVER" != "local" ]; then
+        echo "Executing [$remote_transfer_script] for [$remote_server_login]..."
+        bash "$remote_transfer_script" "$DIR_CONFIG_FILE" "$USER_DATA_LIST" "$MODE" "$LOG_LEVEL" "$remote_server_login" "$IDENTITY_FILE"
+    else
+        echo "Executing [$local_transfer_script]..."
+        bash "$local_transfer_script" "$DIR_CONFIG_FILE" "$USER_DATA_LIST" "$MODE" "$LOG_LEVEL"
+    fi
 
 }
 

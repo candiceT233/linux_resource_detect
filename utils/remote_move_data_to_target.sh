@@ -4,36 +4,36 @@
 DEST_FILES="dest_data_list.txt"
 DIR_CONFIG_FILE="$1"
 USER_DATA_LIST="$2"
+MODE="$3"
+LOG_LEVEL="$4"
+REMOTE_SERVER_LOGIN="$5"
+IDENTITY_FILE="$6"
 
-if [ $# -eq 3 ]; then
-    MODE="$3"
-else
-    MODE=1
-fi
-
-if [ $# -eq 4 ]; then
-    LOG_LEVEL="$4"
-else
-    LOG_LEVEL=1
-fi
+# # Remote SSH server details
+# REMOTE_SERVER_LOGIN="$CHECK_USER@$REMOTE_SERVER"
 
 # Function to display usage instructions
 usage() {
-  echo "Usage: $0 <DIR_CONFIG_FILE> <USER_DATA_LIST> [MODE] [LOG_LEVEL]"
+  echo "Usage: $0 [DIR_CONFIG_FILE] [USER_DATA_LIST] [MODE] [LOG_LEVEL] [REMOTE_SERVER_LOGIN] [IDENTITY_FILE]"
   echo "Options:"
-  echo "  <DIR_CONFIG_FILE>   Path to the directory configuration file."
-  echo "  <USER_DATA_LIST>    Path to the user data list file."
-  echo "  [MODE]              Mode (0 - do not restore user data, 1 - restore user data, default: 1 for testing)."
-  echo "  [LOG_LEVEL]         Log level (0 - minimal log, 1 - full log, default: 1)."
+  echo "  DIR_CONFIG_FILE       Path to the directory configuration file."
+  echo "  USER_DATA_LIST        Path to the user data list file."
+  echo "  MODE                  Mode (0 - do not restore user data, 1 - restore user data, default: 1 for testing)."
+  echo "  LOG_LEVEL             Log level (0 - minimal log, 1 - full log, default: 1)."
+  echo "  REMOTE_SERVER_LOGIN   Remote server login name user_name@remote_server_ip."
+  echo "  IDENTITY_FILE         Identity file for SSH connection (optional)."
 }
 
-# If incorrect number of args, print usage and exit
-if [ $# -ne 2 ]; then
-    usage
-    exit 1
+# If less than 5 args supplied, display usage and exit.
+if [ $# -lt 5 ]; then
+  usage
+  exit 1
 fi
 
-exit 0
+# Check if IDENTITY_FILE is entered
+if [ -z "$IDENTITY_FILE" ]; then
+    echo "Warning: no identity file specified"
+fi
 
 # Main script
 
@@ -96,11 +96,14 @@ user_file_list=()
 
 while IFS=, read -r file_path
 do
+    # Evaluate the file path to resolve environment variables
+    eval "resolved_path=$file_path"
+
     # if file exist, echo
-    if [ -f "$file_path" ]; then
-        user_file_list+=("$file_path")
+    if [ -f "$resolved_path" ]; then
+        user_file_list+=("$resolved_path")
     else
-        echo "Error: $file_path does not exist, not added."
+        echo "Error: $resolved_path does not exist, not added."
         continue
     fi
 done < "$USER_DATA_LIST"
@@ -240,32 +243,44 @@ move_data_to_dest(){
         data_file=$(basename "$full_data_path")
         full_dest_file="$dest_path/$data_file"
 
-        # check if full_dest_file already exist
-        if [[ "$full_data_path" == "$full_dest_file"* ]]; then
-            echo "Error: $full_data_path already exist in $dest_path"
+        # check if full_dest_file already exist in REMOTE_SERVER_LOGIN
+        file_exist=0 # 0:false 1:true
+        if [ ! -z "$IDENTITY_FILE" ]; then
+            if ssh -i "$IDENTITY_FILE" "$REMOTE_SERVER_LOGIN" "test -e '$full_dest_file'"; then file_exist=1; fi
+        else
+            if ssh "$REMOTE_SERVER_LOGIN" "test -e '$full_dest_file'"; then file_exist=1; fi
+        fi
+
+        if [ $file_exist -eq 1 ]; then
+            [ $LOG_LEVEL -eq 1 ] && echo "Error: $full_data_path already exist in $REMOTE_SERVER_LOGIN:$dest_path"
         else
             [ $LOG_LEVEL -eq 1 ] && echo "Moving $full_data_path to $dest_path"
-            start_time=$(date +%s.%N)        
-            mv "$full_data_path" "$dest_path"
+            start_time=$(date +%s.%N)
+            # Move data to remote server's $dest_path
+            if [ ! -z "$IDENTITY_FILE" ]; then
+                scp -i "$IDENTITY_FILE" "$full_data_path" "$REMOTE_SERVER_LOGIN:$dest_path"
+            else
+                scp "$full_data_path" "$REMOTE_SERVER_LOGIN:$dest_path"
+            fi
             end_time=$(date +%s.%N)
             duration=$(echo "$end_time - $start_time" | bc)
             let moved_data++
 
-            dest_data="$dest_path/$data_file"
+            # dest_data="$dest_path/$data_file"
             # store performance statistics
-            bw=$(check_data_moving_performance "$dest_data" "$duration")
-            move_data_perf[$moved_data,"Dest"]=$dest_data
+            bw=$(check_data_moving_performance "$full_dest_file" "$duration")
+            move_data_perf[$moved_data,"Dest"]=$full_dest_file
             move_data_perf[$moved_data,"Duration"]=$duration
             move_data_perf[$moved_data,"Bandwidth"]=$bw
 
-            [ $LOG_LEVEL -eq 1 ] && echo "Moved $full_data_path to $dest_path in $duration seconds"
-            [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $dest_data`"
+            [ $LOG_LEVEL -eq 1 ] && echo "Moved $full_data_path to $REMOTE_SERVER_LOGIN:$dest_path in $duration seconds"
+            # [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
         fi
     done
 }
 
 dest_path="${best_bw_item[Actual_Path]}"
-move_data_to_dest "$dest_path"
+move_data_to_dest "$REMOTE_SERVER_LOGIN:$dest_path"
 
 
 # ---- Check if destination path has the user files
@@ -275,13 +290,15 @@ check_dest_data(){
         data_file=$(basename "$full_data_path")
         full_dest_file="$dest_path/$data_file"
 
-        # check full_dest_file exits
-        if [ -f "$full_dest_file" ]; then
-            [ $LOG_LEVEL -eq 1 ] && echo "Successfully moved $full_dest_file"
-            [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
-            echo "$full_dest_file" > $DEST_FILES
+        # Check if the $REMOTE_SERVER_LOGIN:$full_dest_file exists
+        if [ ! -z "$IDENTITY_FILE" ]; then
+            ssh -i "$IDENTITY_FILE" "$REMOTE_SERVER_LOGIN" "test -e '$full_dest_path' && \
+                echo 'Successfully moved to $REMOTE_SERVER_LOGIN:$full_dest_file' || \
+                echo 'Error: $REMOTE_SERVER_LOGIN:$full_dest_file does not exist'"
         else
-            echo "Error: $full_dest_file does not exist"
+            ssh "$REMOTE_SERVER_LOGIN" "test -e '$full_dest_path' && \
+                echo 'Successfully moved to $REMOTE_SERVER_LOGIN:$full_dest_file' || \
+                echo 'Error: $REMOTE_SERVER_LOGIN:$full_dest_file does not exist'"
         fi
     done
 }
@@ -311,14 +328,28 @@ restore_data(){
         full_data_path="${full_data_path%/*}/"
         [ $LOG_LEVEL -eq 1 ] && echo "moving $data_file back to $full_data_path"
 
+        # check if full_dest_file already exist in REMOTE_SERVER_LOGIN
+        file_exist=0 # 0:false 1:true
+        if [ ! -z "$IDENTITY_FILE" ]; then
+            if ssh -i "$IDENTITY_FILE" "$REMOTE_SERVER_LOGIN" "test -e '$full_dest_path'"; then file_exist=1; fi
+        fi
+
         # check if full_dest_file already exist
-        if [ -f "$full_dest_file" ]; then
-            [ $LOG_LEVEL -eq 1 ] && echo "Restoring $full_dest_file to $full_data_path"
-            start_time=$(date +%s.%N)        
-            mv "$full_dest_file" "$full_data_path"
+        if [ $file_exist -eq 1 ]; then
+
+            [ $LOG_LEVEL -eq 1 ] && echo "Restoring $REMOTE_SERVER_LOGIN:$full_dest_file to $full_data_path"
+            start_time=$(date +%s.%N)
+
+            # Move data from remote server's $dest_path back to original path
+            if [ ! -z "$IDENTITY_FILE" ]; then
+                scp -i "$IDENTITY_FILE" "$REMOTE_SERVER_LOGIN:$full_dest_file" "$full_data_path" 
+            else
+                scp "$REMOTE_SERVER_LOGIN:$full_dest_file" "$full_data_path"
+            fi
+
             end_time=$(date +%s.%N)
             echo "Restored $full_dest_file to $full_data_path in $(echo "$end_time - $start_time" | bc) seconds"
-            [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
+            [ $LOG_LEVEL -eq 1 ] &&  ls $full_dest_file > /dev/null 2>&1 && echo "$data_file restored failed" || echo "$data_file restored successfully"
         else
             echo "Error: $full_dest_file does not exist"
         fi
