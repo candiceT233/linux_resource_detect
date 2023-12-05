@@ -141,13 +141,13 @@ COMMENT
         # User dsync (synchronized I/O), direct does not work for tmpfs
         bytes_size=4K # 4K, 64K or 1M
         # sar -d $dir
+        
+        #FIXME: parsing of stats is incorrect
+        
         # Test write latency and bandwidth
         write_stats["$dir"]="$(dd if=/dev/zero of=$dir/testfile bs=$bytes_size count=1000 oflag=dsync 2>&1 | tail -n 1 | cut -d ',' -f 2-)"
         # Test read latency and bandwidth
         read_stats["$dir"]="$(dd if=$dir/testfile of=/dev/null bs=$bytes_size count=1000 iflag=dsync 2>&1 | tail -n 1 | cut -d ',' -f 2-)"
-
-        # write_stats["$dir"]="$(dd if=/dev/zero of=$dir/testfile bs=$bytes_size count=1000 oflag=dsync 2>&1 )"
-        # read_stats["$dir"]="$(dd if=$dir/testfile of=/dev/null bs=$bytes_size count=1000 iflag=dsync 2>&1 )"
 
         # clean up
         rm -rf $dir/testfile
@@ -179,6 +179,8 @@ LIST_ALL_INFO (){
         general_info="$(df -T "$path" | awk 'NR==2' | awk -F '[[:space:]]+' '{OFS=","; $1=$1}1')"
         access_mode=$(stat -c "%a" "$path")
         access_right=$(stat -c "%A" "$path")
+        
+        # FIXME: parsing of status is incorrect
         read_latency=`echo "${read_stats["$path"]}" | cut -d ',' -f 1`
         write_latency=`echo "${write_stats["$path"]}" | cut -d ',' -f 1`
         read_bandwidth=`echo "${read_stats["$path"]}" | cut -d ',' -f 2`
