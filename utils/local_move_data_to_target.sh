@@ -1,72 +1,32 @@
 #!/bin/bash
 
 # Default values
-LOG_LEVEL=1
 DEST_FILES="dest_data_list.txt"
-MODE=1
+DIR_CONFIG_FILE="$1"
+USER_DATA_LIST="$2"
+MODE="$3"
+LOG_LEVEL="$4"
+
+
 # Function to display usage instructions
 usage() {
-  echo "Usage: $0 [-c|--conf <CURR_STORAGE_CONF>] [-d|--data <USER_DATA_LIST>] [-l|--log-level <LOG_LEVEL>]"
+  echo "Usage: $0 <DIR_CONFIG_FILE> <USER_DATA_LIST> <MODE> <LOG_LEVEL>"
   echo "Options:"
-  echo "  -c, --conf <CURR_STORAGE_CONF>: Path to the current storage configuration file."
-  echo "  -d, --data <USER_DATA_LIST>: Path to the file containing absolute user data file paths."
-  echo "  -l, --log-level <LOG_LEVEL>: Log level: 0 - minimal log, 1 - full log, default is 1"
-  echo "  -m, --mode <MODE>: Mode: 0 - not restore user data, 1 - restore user data, default is 1"
-  echo "  -h, --help: Display this help and exit"
-  exit 1
+  echo "  <DIR_CONFIG_FILE>   Path to the directory configuration file."
+  echo "  <USER_DATA_LIST>    Path to the user data list file."
+  echo "  <MODE>              Mode (0 - do not restore user data, 1 - restore user data, default: 1 for testing)."
+  echo "  <LOG_LEVEL>         Log level (0 - minimal log, 1 - full log, default: 1)."
 }
 
-# Function to check input options
-check_input() {
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case $key in
-      -c|--conf)
-        CURR_STORAGE_CONF="$2"
-        shift 2
-        ;;
-      -d|--data)
-        USER_DATA_LIST="$2"
-        shift 2
-        ;;
-      -l|--log-level)
-        LOG_LEVEL="$2"
-        shift 2
-        ;;
-      -h|--help)
-        usage
-        ;;
-      *)
-        echo "Unknown option: $key" >&2
-        usage
-        ;;
-    esac
-  done
-
-  # Check if both options are provided
-  if [ -z "$CURR_STORAGE_CONF" ] || [ -z "$USER_DATA_LIST" ]; then
-    echo "Both -c or --conf and -d or --data options are required."
+# If incorrect number of args, print usage and exit
+if [ $# -ne 4 ]; then
     usage
-  fi
-
-  # Check if files exist
-  if [ ! -f "$CURR_STORAGE_CONF" ]; then
-    echo "Error: Current storage configuration file '$CURR_STORAGE_CONF' does not exist."
-    usage
-  fi
-
-  if [ ! -f "$USER_DATA_LIST" ]; then
-    echo "Error: User data path list file '$USER_DATA_LIST' does not exist."
-    usage
-  fi
-}
+    exit 1
+fi
 
 # Main script
 
-# Check input options
-check_input "$@"
-
-echo "Current storage config file: $CURR_STORAGE_CONF"
+echo "Current storage config file: $DIR_CONFIG_FILE"
 echo "User data path list file: $USER_DATA_LIST"
 echo "LOG_LEVEL: $LOG_LEVEL"
 echo "DEST_FILES: $DEST_FILES"
@@ -125,11 +85,14 @@ user_file_list=()
 
 while IFS=, read -r file_path
 do
+    # Evaluate the file path to resolve environment variables
+    eval "resolved_path=$file_path"
+
     # if file exist, echo
-    if [ -f "$file_path" ]; then
-        user_file_list+=("$file_path")
+    if [ -f "$resolved_path" ]; then
+        user_file_list+=("$resolved_path")
     else
-        echo "Error: $file_path does not exist, not added."
+        echo "Error: $resolved_path does not exist, not added."
         continue
     fi
 done < "$USER_DATA_LIST"
@@ -145,7 +108,7 @@ done
 # ---- Parsing discovered storage configs
 
 # Read the first line (header)
-IFS=, read -r first_line < "$CURR_STORAGE_CONF"
+IFS=, read -r first_line < "$DIR_CONFIG_FILE"
 # Split the line into an array using , as the delimiter
 IFS=',' read -ra header <<< "$first_line"
 
@@ -194,7 +157,7 @@ do
 
 
 done
-} < "$CURR_STORAGE_CONF"
+} < "$DIR_CONFIG_FILE"
 
 
 # PRINT_CONFIG
@@ -320,10 +283,16 @@ check_dest_data
 # ---- Display movement performance statistics
 display_movement_performance_stat(){
     echo "-------------------------------------"
-    echo "Data movement performance statistics:"
-    for i in $(seq 1 $moved_data); do
-        echo "  - ${move_data_perf[$i,Dest]}: ${move_data_perf[$i,Duration]} seconds, ${move_data_perf[$i,Bandwidth]} B/s"
-    done
+    # check if there is any data moved
+    if [ $moved_data -eq 0 ]; then
+        echo "No data moved"
+        return
+    else
+        echo "Data movement performance statistics:"
+        for i in $(seq 1 $moved_data); do
+            echo "  - ${move_data_perf[$i,Dest]}: ${move_data_perf[$i,Duration]} seconds, ${move_data_perf[$i,Bandwidth]} B/s"
+        done
+    fi
     echo "-------------------------------------"
 }
 
@@ -347,7 +316,7 @@ restore_data(){
             mv "$full_dest_file" "$full_data_path"
             end_time=$(date +%s.%N)
             echo "Restored $full_dest_file to $full_data_path in $(echo "$end_time - $start_time" | bc) seconds"
-            [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
+            [ $LOG_LEVEL -eq 1 ] &&  ls $full_dest_file > /dev/null 2>&1 && echo "$data_file restored failed" || echo "$data_file restored successfully"
         else
             echo "Error: $full_dest_file does not exist"
         fi

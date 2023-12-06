@@ -1,69 +1,25 @@
 #!/bin/bash
 
-# Default values
-LOG_LEVEL=1
-CHECK_USER="$USER"
-DIR_CONFIG_FILE="dir_config.txt"
+# Variables
+LOG_LEVEL=$1
+CHECK_USER="$2"
+DIR_CONFIG_FILE="$3"
+CHECK_GROUP="users"
 
 # Function to print usage
-PRINT_USAGE () {
-    echo "Usage: $0 [-u <user name>] [-log <log level>] [-f <user data file>]"
+usage () {
+    echo "Usage: $0 <log level> <user name> <config file>"
     echo "Options:"
-    echo "  -u, --user        User name to check, default is current user"
-    echo "  -log, --log-level Log level: 0 - minimal log, 1 - full log, default is 1"
-    echo "  -o, --output        File with all detected user storage paths"
-    echo "  -h, --help        Display this help and exit"
+    echo "  <log level>     Log level: 0 - minimal log, 1 - full log"
+    echo "  <user name>     User name to check"
+    echo "  <config file>   Path to the directory configuration file"
 }
 
-while [[ $# -gt 0 ]]; do
-    key="$1"
-
-    case $key in
-        -u|--user)
-            CHECK_USER="$2"
-            shift # past argument
-            shift # past value
-            ;;
-        -log|--log-level)
-            if ! [[ "$2" =~ ^[0-9]+$ ]]; then
-                echo "Error: log level must be a number"
-                exit 1
-            fi
-            LOG_LEVEL="$2"
-            shift # past argument
-            shift # past value
-            ;;
-        -o|--output)
-            DIR_CONFIG_FILE="$2"
-            shift # past argument
-            shift # past value
-            ;;
-        -h|--help)
-            PRINT_USAGE
-            exit 0
-            ;;
-        *)
-            # unknown option
-            PRINT_USAGE
-            exit 1
-            ;;
-    esac
-done
-
-
-
-# Check if LOG_LEVEL is not a number
-if ! [[ "$LOG_LEVEL" =~ ^[0-9]+$ ]]; then
-    echo "Error: log level must be a number"
-    PRINT_USAGE
+# If incorrect number of args, print usage and exit
+if [ $# -ne 3 ]; then
+    usage
     exit 1
 fi
-
-echo "LOG_LEVEL: $LOG_LEVEL"
-echo "CHECK_USER: $CHECK_USER"
-echo "DIR_CONFIG_FILE: $DIR_CONFIG_FILE"
-echo "-------------------------------------"
-CHECK_GROUP="users"
 
 
 # Initialize an associative array to store unique parent directories
@@ -115,10 +71,10 @@ loop_count=0 # Track searching overhead
 
 # find all mount directories
 while IFS= read -r dir; do
+    let loop_count++
     if [ $dir != "/" ] && [ $dir != "$all_user_home" ]; then # ignore root and home
         mnt_directories["$dir"]=1
     fi
-    let loop_count++
 done < <(findmnt --noheadings --list | grep -Ev "$exclude_pattern" | cut -d ' ' -f1)
 # 'findmnt --uniq' option works up to findmnt from util-linux 2.32.1
 
@@ -127,11 +83,14 @@ for mnt_dir in "${!mnt_directories[@]}"; do
     # Extract the group access permission of the directory
     write_perm="$(stat -c "%A" "$mnt_dir" 2>/dev/null| cut -c 6)"
     if [ "$write_perm" == "w" ]; then
-        if [ "$LOG_LEVEL" -eq 1 ]; then echo "adding mnt_dir: $mnt_dir"; fi
+        let loop_count++
+        if [ "$LOG_LEVEL" -eq 1 ]; then echo "adding user dir: $mnt_dir"; fi
         all_directories["$mnt_dir"]=1
+        
     fi
 
     while IFS= read -r -d '' dir; do
+        let loop_count++
 	    # parent_dir="$(dirname "$dir")"
         # Extract the group access permission of the directory
         write_perm="$(stat -c "%A" "$dir" 2>/dev/null| cut -c 3)" # the owner is the user
@@ -141,7 +100,7 @@ for mnt_dir in "${!mnt_directories[@]}"; do
             break
         fi
 
-        let loop_count++
+        
     done < <(find $mnt_dir -maxdepth 2 -type d -user "$CHECK_USER" -print0 2>/dev/null)
 done
 
@@ -180,27 +139,31 @@ COMMENT
 
     for dir in "${!all_directories[@]}"; do
         # User dsync (synchronized I/O), direct does not work for tmpfs
-        bytes_size=64K # 4K, 64K or 1M
+        bytes_size=4K # 4K, 64K or 1M
         # sar -d $dir
+
         # Test write latency and bandwidth
-        write_stats["$dir"]="$(dd if=/dev/zero of=$dir/testfile bs=$bytes_size count=1000 oflag=dsync 2>&1 | tail -n 1 | cut -d ',' -f 2-)"
+        write_output="$(dd if=/dev/zero of=$dir/testfile bs=$bytes_size count=1000 oflag=dsync 2>&1)"
+        write_output=$(echo "$write_output" | tail -n 1 | sed 's/([^)]*) copied/copied/') # | sed -n 's/.*(\(.*\)).*/\1/p'
+
         # Test read latency and bandwidth
-        read_stats["$dir"]="$(dd if=$dir/testfile of=/dev/null bs=$bytes_size count=1000 iflag=dsync 2>&1 | tail -n 1 | cut -d ',' -f 2-)"
+        read_output="$(dd if=$dir/testfile of=/dev/null bs=$bytes_size count=1000 iflag=dsync 2>&1)"
+        read_output=$(echo "$read_output" | tail -n 1 | sed 's/([^)]*) copied/copied/')
+        # [ $LOG_LEVEL -eq 1 ] && echo "read_output: $read_output"
 
-        # write_stats["$dir"]="$(dd if=/dev/zero of=$dir/testfile bs=$bytes_size count=1000 oflag=dsync 2>&1 )"
-        # read_stats["$dir"]="$(dd if=$dir/testfile of=/dev/null bs=$bytes_size count=1000 iflag=dsync 2>&1 )"
-
+        write_stats["$dir"]="$write_output"
+        read_stats["$dir"]="$read_output"
 
         # clean up
         rm -rf $dir/testfile
 
-        # Check if the write latency is empty or "0.0 kB/s"
-        if [ -z "${write_stats["$dir"]}" ] || [ "${write_stats["$dir"]}" == " 0.0 kB/s" ]; then
-            [ $LOG_LEVEL -eq 1 ] && echo "No latency data for $dir"
-            # add latency N/A to dir
-            write_stats["$dir"]="N/A,${write_stats["$dir"]}"
-            read_stats["$dir"]="N/A,${read_stats["$dir"]}"
-        fi
+        # # Check if the write latency is empty or "0.0 kB/s"
+        # if [ -z "${write_stats["$dir"]}" ] || [ "${write_stats["$dir"]}" == " 0.0 kB/s" ]; then
+        #     [ $LOG_LEVEL -eq 1 ] && echo "No latency data for $dir"
+        #     # add latency N/A to dir
+        #     write_stats["$dir"]="N/A,${write_stats["$dir"]}"
+        #     read_stats["$dir"]="N/A,${read_stats["$dir"]}"
+        # fi
 
         [ $LOG_LEVEL -eq 1 ] && echo "$dir: {write: ${write_stats["$dir"]}, read: ${read_stats["$dir"]}}"
 
@@ -221,10 +184,11 @@ LIST_ALL_INFO (){
         general_info="$(df -T "$path" | awk 'NR==2' | awk -F '[[:space:]]+' '{OFS=","; $1=$1}1')"
         access_mode=$(stat -c "%a" "$path")
         access_right=$(stat -c "%A" "$path")
-        read_latency=`echo "${read_stats["$path"]}" | cut -d ',' -f 1`
-        write_latency=`echo "${write_stats["$path"]}" | cut -d ',' -f 1`
-        read_bandwidth=`echo "${read_stats["$path"]}" | cut -d ',' -f 2`
-        write_bandwidth=`echo "${write_stats["$path"]}" | cut -d ',' -f 2`
+        
+        read_latency=`echo "${read_stats["$path"]}" | cut -d ',' -f 2`
+        write_latency=`echo "${write_stats["$path"]}" | cut -d ',' -f 2`
+        read_bandwidth=`echo "${read_stats["$path"]}" | cut -d ',' -f 3`
+        write_bandwidth=`echo "${write_stats["$path"]}" | cut -d ',' -f 3`
         directories_info["$path"]="$path,$general_info,$access_mode,$access_right,$read_latency,$read_bandwidth,$write_latency,$write_bandwidth"
     done
 
