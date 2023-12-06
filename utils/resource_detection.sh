@@ -141,24 +141,29 @@ COMMENT
         # User dsync (synchronized I/O), direct does not work for tmpfs
         bytes_size=4K # 4K, 64K or 1M
         # sar -d $dir
-        
-        #FIXME: parsing of stats is incorrect
-        
+
         # Test write latency and bandwidth
-        write_stats["$dir"]="$(dd if=/dev/zero of=$dir/testfile bs=$bytes_size count=1000 oflag=dsync 2>&1 | tail -n 1 | cut -d ',' -f 2-)"
+        write_output="$(dd if=/dev/zero of=$dir/testfile bs=$bytes_size count=1000 oflag=dsync 2>&1)"
+        write_output=$(echo "$write_output" | tail -n 1 | sed 's/([^)]*) copied/copied/') # | sed -n 's/.*(\(.*\)).*/\1/p'
+
         # Test read latency and bandwidth
-        read_stats["$dir"]="$(dd if=$dir/testfile of=/dev/null bs=$bytes_size count=1000 iflag=dsync 2>&1 | tail -n 1 | cut -d ',' -f 2-)"
+        read_output="$(dd if=$dir/testfile of=/dev/null bs=$bytes_size count=1000 iflag=dsync 2>&1)"
+        read_output=$(echo "$read_output" | tail -n 1 | sed 's/([^)]*) copied/copied/')
+        # [ $LOG_LEVEL -eq 1 ] && echo "read_output: $read_output"
+
+        write_stats["$dir"]="$write_output"
+        read_stats["$dir"]="$read_output"
 
         # clean up
         rm -rf $dir/testfile
 
-        # Check if the write latency is empty or "0.0 kB/s"
-        if [ -z "${write_stats["$dir"]}" ] || [ "${write_stats["$dir"]}" == " 0.0 kB/s" ]; then
-            [ $LOG_LEVEL -eq 1 ] && echo "No latency data for $dir"
-            # add latency N/A to dir
-            write_stats["$dir"]="N/A,${write_stats["$dir"]}"
-            read_stats["$dir"]="N/A,${read_stats["$dir"]}"
-        fi
+        # # Check if the write latency is empty or "0.0 kB/s"
+        # if [ -z "${write_stats["$dir"]}" ] || [ "${write_stats["$dir"]}" == " 0.0 kB/s" ]; then
+        #     [ $LOG_LEVEL -eq 1 ] && echo "No latency data for $dir"
+        #     # add latency N/A to dir
+        #     write_stats["$dir"]="N/A,${write_stats["$dir"]}"
+        #     read_stats["$dir"]="N/A,${read_stats["$dir"]}"
+        # fi
 
         [ $LOG_LEVEL -eq 1 ] && echo "$dir: {write: ${write_stats["$dir"]}, read: ${read_stats["$dir"]}}"
 
@@ -180,11 +185,10 @@ LIST_ALL_INFO (){
         access_mode=$(stat -c "%a" "$path")
         access_right=$(stat -c "%A" "$path")
         
-        # FIXME: parsing of status is incorrect
-        read_latency=`echo "${read_stats["$path"]}" | cut -d ',' -f 1`
-        write_latency=`echo "${write_stats["$path"]}" | cut -d ',' -f 1`
-        read_bandwidth=`echo "${read_stats["$path"]}" | cut -d ',' -f 2`
-        write_bandwidth=`echo "${write_stats["$path"]}" | cut -d ',' -f 2`
+        read_latency=`echo "${read_stats["$path"]}" | cut -d ',' -f 2`
+        write_latency=`echo "${write_stats["$path"]}" | cut -d ',' -f 2`
+        read_bandwidth=`echo "${read_stats["$path"]}" | cut -d ',' -f 3`
+        write_bandwidth=`echo "${write_stats["$path"]}" | cut -d ',' -f 3`
         directories_info["$path"]="$path,$general_info,$access_mode,$access_right,$read_latency,$read_bandwidth,$write_latency,$write_bandwidth"
     done
 
