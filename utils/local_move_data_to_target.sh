@@ -283,10 +283,16 @@ check_dest_data
 # ---- Display movement performance statistics
 display_movement_performance_stat(){
     echo "-------------------------------------"
-    echo "Data movement performance statistics:"
-    for i in $(seq 1 $moved_data); do
-        echo "  - ${move_data_perf[$i,Dest]}: ${move_data_perf[$i,Duration]} seconds, ${move_data_perf[$i,Bandwidth]} B/s"
-    done
+    # check if there is any data moved
+    if [ $moved_data -eq 0 ]; then
+        echo "No data moved"
+        return
+    else
+        echo "Data movement performance statistics:"
+        for i in $(seq 1 $moved_data); do
+            echo "  - ${move_data_perf[$i,Dest]}: ${move_data_perf[$i,Duration]} seconds, ${move_data_perf[$i,Bandwidth]} B/s"
+        done
+    fi
     echo "-------------------------------------"
 }
 
