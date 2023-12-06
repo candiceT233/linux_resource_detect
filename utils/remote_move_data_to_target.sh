@@ -2,6 +2,7 @@
 
 # Default values
 DEST_FILES="dest_data_list.txt"
+rm -rf $DEST_FILES
 DIR_CONFIG_FILE="$1"
 USER_DATA_LIST="$2"
 MODE="$3"
@@ -301,6 +302,7 @@ check_dest_data(){
         # print message
         if [ $file_exist -eq 1 ]; then
             [ $LOG_LEVEL -eq 1 ] && echo "Successfully moved to $REMOTE_SERVER_LOGIN:$full_dest_file"
+            echo "$REMOTE_SERVER_LOGIN:$full_dest_file" >> $DEST_FILES
         else
             [ $LOG_LEVEL -eq 1 ] && echo "Error: $REMOTE_SERVER_LOGIN:$full_dest_file does not exist"
         fi

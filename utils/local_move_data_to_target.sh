@@ -2,6 +2,7 @@
 
 # Default values
 DEST_FILES="dest_data_list.txt"
+rm -rf $DEST_FILES
 DIR_CONFIG_FILE="$1"
 USER_DATA_LIST="$2"
 MODE="$3"
@@ -271,7 +272,7 @@ check_dest_data(){
         if [ -f "$full_dest_file" ]; then
             [ $LOG_LEVEL -eq 1 ] && echo "Successfully moved $full_dest_file"
             [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
-            echo "$full_dest_file" > $DEST_FILES
+            echo "$full_dest_file" >> $DEST_FILES
         else
             echo "Error: $full_dest_file does not exist"
         fi
