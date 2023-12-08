@@ -1,6 +1,6 @@
 Actual_Path,Filesystem,Type,Size_KB,Used,Avail_KB,Use%,Mounted_on,Mode,Access_Right,Read_Latency,Read_Bandwidth,Write_Latency,Write_Bandwidth
 /dev/mqueue,mqueue,mqueue,0,0,0,-,/dev/mqueue,1777,drwxrwxrwt, 0.000331795 s, 181 kB/s, 0.000584294 s, 0.0 kB/s
 /dev/shm,tmpfs,tmpfs,49318724,1988,49316736,1%,/dev/shm,1777,drwxrwxrwt, 0.00406246 s, 1.0 GB/s, 0.0120384 s, 340 MB/s
-/mnt/common/mtang11,/dev/sda1,xfs,46673249792,3189956340,43483293452,7%,/mnt/common,750,drwxr-x---, 0.00790131 s, 518 MB/s, 0.132411 s, 30.9 MB/s
-/mnt/repo/beegfs-confs-jie,/dev/sda2,xfs,104806148,67702240,37103908,65%,/mnt/repo,755,drwxr-xr-x, 0.00654752 s, 626 MB/s, 0.12116 s, 33.8 MB/s
+/mnt/common/user,/dev/sda1,xfs,46673249792,3189956340,43483293452,7%,/mnt/common,750,drwxr-x---, 0.00790131 s, 518 MB/s, 0.132411 s, 30.9 MB/s
+/mnt/repo/beegfs-confs-user,/dev/sda2,xfs,104806148,67702240,37103908,65%,/mnt/repo,755,drwxr-xr-x, 0.00654752 s, 626 MB/s, 0.12116 s, 33.8 MB/s
 /tmp,/dev/sdb2,ext4,1055762868,189761144,812298252,19%,/,1777,drwxrwxrwt, 0.00859842 s, 476 MB/s, 1.96235 s, 2.1 MB/s
