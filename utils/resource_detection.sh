@@ -178,7 +178,7 @@ LIST_ALL_INFO (){
     
 
     declare -A directories_info
-    header="Actual_Path,Filesystem,Type,Size,Used,Avail_KB,Use%,Mounted_on,Mode,Access_Right,Read_Latency,Read_Bandwidth,Write_Latency,Write_Bandwidth"
+    header="Actual_Path,Filesystem,Type,Size_KB,Used,Avail_KB,Use%,Mounted_on,Mode,Access_Right,Read_Latency,Read_Bandwidth,Write_Latency,Write_Bandwidth"
     for path in "${!all_directories[@]}"; do
 
         general_info="$(df -T "$path" | awk 'NR==2' | awk -F '[[:space:]]+' '{OFS=","; $1=$1}1')"
