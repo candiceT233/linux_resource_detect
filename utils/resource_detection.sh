@@ -203,5 +203,5 @@ LIST_ALL_INFO (){
 
 TEST_DIR_BW
 
-[ $LOG_LEVEL -eq 1 ] && echo "Listing all directories info ..." && LIST_ALL_INFO | tee "$DIR_CONFIG_FILE"
+# [ $LOG_LEVEL -eq 1 ] && echo "Listing all directories info ..." && LIST_ALL_INFO | tee "$DIR_CONFIG_FILE"
 
