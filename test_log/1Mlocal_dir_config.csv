@@ -1,0 +1,9 @@
+Actual_Path,Filesystem,Type,Size_KB,Used,Avail_KB,Use%,Mounted_on,Mode,Access_Right,Read_Time(sec),Read_Bandwidth,Write_Time(sec),Write_Bandwidth
+/tmp,/dev/sda2,ext3,15995848,9633300,5543348,64%,/,1777,drwxrwxrwt,0.252352, 4.2 GB/s,3.54949, 295 MB/s
+/rcfs/scratch/tang584,beegfs_nodev,beegfs,3575824999936,3157557085184,418267914752,89%,/rcfs,755,drwxr-xr-x,0.371587, 2.8 GB/s,0.599384, 1.7 GB/s
+/scratch,/dev/sda3,xfs,386740736,32992,386707744,1%,/scratch,777,drwxrwxrwx,0.195834, 5.4 GB/s,2.84132, 369 MB/s
+/dev/shm,tmpfs,tmpfs,32790036,0,32790036,0%,/dev/shm,1777,drwxrwxrwt,0.21324, 4.9 GB/s,0.493578, 2.1 GB/s
+/vast/projects,vasti:/projects,nfs,2373952208896,1041542955008,1332409253888,44%,/vast/projects,777,drwxrwxrwx,0.252721, 4.1 GB/s,11.5997, 90.4 MB/s
+/qfs/people/tang584,qfsi:/people,nfs,419921920,340182016,79739904,82%,/qfs/people,2755,drwxr-sr-x,0.252778, 4.1 GB/s,16.926, 62.0 MB/s
+/qfs/projects/oddite/tang584,qfsi:/projects,nfs,195312500736,10678421504,184634079232,6%,/qfs/projects,2755,drwxr-sr-x,0.252761, 4.1 GB/s,17.1957, 61.0 MB/s
+/dev/mqueue,mqueue,mqueue,0,0,0,-,/dev/mqueue,1777,drwxrwxrwt,0.000120476, 498 kB/s,0.000688444, 0.0 kB/s
