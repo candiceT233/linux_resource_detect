@@ -113,8 +113,6 @@ duration_ms=$(printf "%.0f" "$(echo "$duration_seconds * 1000" | bc -l)")
 declare -A read_stats
 declare -A write_stats
 
-
-
 TEST_DIR_BW (){
 
 <<COMMENT
@@ -143,12 +141,11 @@ Each FLAG symbol may be:
 
 COMMENT
 
-    [ $LOG_LEVEL -eq 1 ] && echo "Testing all_directories latency and bandwidth ..."
+    block_size=1M ## TODO: is 4KB a fair test here? 4K
+    [ $LOG_LEVEL -eq 1 ] && echo "Testing I/O bandwidth with block size $block_size..."
 
     for dir in "${!all_directories[@]}"; do
-        # stat the block size in bytes of the dir
-        block_size=1M ## TODO: is 4KB a fair test here? 4K
-
+        
         # Test write time and bandwidth
         write_output="$(dd if=/dev/zero of=$dir/testfile bs=$block_size count=1000 oflag=dsync 2>&1)"
         write_output=$(echo "$write_output" | tail -n 1 | sed 's/([^)]*) copied/copied/') # | sed -n 's/.*(\(.*\)).*/\1/p'
@@ -182,21 +179,21 @@ COMMENT
 # List Storage Type and Storage Space of paths in directories
 LIST_ALL_INFO (){
 
-    
-
     declare -A directories_info
-    header="Actual_Path,Filesystem,Type,Size_KB,Used,Avail_KB,Use%,Mounted_on,Mode,Access_Right,Read_Time,Read_Bandwidth,Write_Time,Write_Bandwidth"
+    header="Actual_Path,Filesystem,Type,Size_KB,Used,Avail_KB,Use%,Mounted_on,Mode,Access_Right,Read_Time(sec),Read_Bandwidth,Write_Time(sec),Write_Bandwidth"
     for path in "${!all_directories[@]}"; do
 
         general_info="$(df -T "$path" | awk 'NR==2' | awk -F '[[:space:]]+' '{OFS=","; $1=$1}1')"
         access_mode=$(stat -c "%a" "$path")
         access_right=$(stat -c "%A" "$path")
         
-        read_latency=`echo "${read_stats["$path"]}" | cut -d ',' -f 2`
-        write_latency=`echo "${write_stats["$path"]}" | cut -d ',' -f 2`
+        read_time=`echo "${read_stats["$path"]}" | cut -d ',' -f 2`
+        read_time_number="${read_time//[^0-9.]}"
+        write_time=`echo "${write_stats["$path"]}" | cut -d ',' -f 2`
+        write_time_number="${write_time//[^0-9.]}"
         read_bandwidth=`echo "${read_stats["$path"]}" | cut -d ',' -f 3`
         write_bandwidth=`echo "${write_stats["$path"]}" | cut -d ',' -f 3`
-        directories_info["$path"]="$path,$general_info,$access_mode,$access_right,$read_latency,$read_bandwidth,$write_latency,$write_bandwidth"
+        directories_info["$path"]="$path,$general_info,$access_mode,$access_right,$read_time_number,$read_bandwidth,$write_time_number,$write_bandwidth"
     done
 
     echo "$header"
