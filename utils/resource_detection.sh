@@ -114,6 +114,7 @@ declare -A read_stats
 declare -A write_stats
 
 
+
 TEST_DIR_BW (){
 
 <<COMMENT
@@ -133,21 +134,27 @@ Each FLAG symbol may be:
   count_bytes  treat 'count=N' as a byte count (iflag only)
   skip_bytes  treat 'skip=N' as a byte count (iflag only)
   seek_bytes  treat 'seek=N' as a byte count (oflag only)
+
+##: dd by default tests sequential read and write
+##: use iflag=direct to test random read and oflag=direct to test random write
+##: use iflag=dsync to test write time and oflag=dsync to test read time
+##: without dsync, the write time may include the time to write to the cache, thus closer to latency
+##: block_size is set to 4096 bytes FOR NOW, which is the most common block size
+
 COMMENT
 
     [ $LOG_LEVEL -eq 1 ] && echo "Testing all_directories latency and bandwidth ..."
 
     for dir in "${!all_directories[@]}"; do
-        # User dsync (synchronized I/O), direct does not work for tmpfs
-        bytes_size=4K # 4K, 64K or 1M
-        # sar -d $dir
+        # stat the block size in bytes of the dir
+        block_size=1M ## TODO: is 4KB a fair test here? 4K
 
-        # Test write latency and bandwidth
-        write_output="$(dd if=/dev/zero of=$dir/testfile bs=$bytes_size count=1000 oflag=dsync 2>&1)"
+        # Test write time and bandwidth
+        write_output="$(dd if=/dev/zero of=$dir/testfile bs=$block_size count=1000 oflag=dsync 2>&1)"
         write_output=$(echo "$write_output" | tail -n 1 | sed 's/([^)]*) copied/copied/') # | sed -n 's/.*(\(.*\)).*/\1/p'
 
-        # Test read latency and bandwidth
-        read_output="$(dd if=$dir/testfile of=/dev/null bs=$bytes_size count=1000 iflag=dsync 2>&1)"
+        # Test read time and bandwidth
+        read_output="$(dd if=$dir/testfile of=/dev/null bs=$block_size count=1000 iflag=dsync 2>&1)"
         read_output=$(echo "$read_output" | tail -n 1 | sed 's/([^)]*) copied/copied/')
         # [ $LOG_LEVEL -eq 1 ] && echo "read_output: $read_output"
 
@@ -178,7 +185,7 @@ LIST_ALL_INFO (){
     
 
     declare -A directories_info
-    header="Actual_Path,Filesystem,Type,Size_KB,Used,Avail_KB,Use%,Mounted_on,Mode,Access_Right,Read_Latency,Read_Bandwidth,Write_Latency,Write_Bandwidth"
+    header="Actual_Path,Filesystem,Type,Size_KB,Used,Avail_KB,Use%,Mounted_on,Mode,Access_Right,Read_Time,Read_Bandwidth,Write_Time,Write_Bandwidth"
     for path in "${!all_directories[@]}"; do
 
         general_info="$(df -T "$path" | awk 'NR==2' | awk -F '[[:space:]]+' '{OFS=","; $1=$1}1')"
