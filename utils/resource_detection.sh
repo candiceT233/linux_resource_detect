@@ -133,6 +133,7 @@ Each FLAG symbol may be:
   skip_bytes  treat 'skip=N' as a byte count (iflag only)
   seek_bytes  treat 'seek=N' as a byte count (oflag only)
 
+FIXME: Using dd to test storage bandwidth is not accurate
 ##: dd by default tests sequential read and write
 ##: use iflag=direct to test random read and oflag=direct to test random write
 ##: use iflag=dsync to test write time and oflag=dsync to test read time
