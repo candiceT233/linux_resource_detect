@@ -76,18 +76,18 @@ RUN_IOR (){
                 test_file="$FS/ior_${tsize}_${trial}.bin"
                 
                 rm $test_file 2> /dev/null
-                sudo `$DROP_CACHE_CMD`
+                `$DROP_CACHE_CMD`
 
                 echo "Writing File:"
                 ior -a POSIX -w -t $tsize -b 1g -s 10 -e -F -k -e -useO_DIRECT -o $test_file
 
-                sudo `$DROP_CACHE_CMD`
+                `$DROP_CACHE_CMD`
                 sleep 5
 
                 echo "Reading File:"
                 ior -a POSIX -r -t $tsize -b 1g -s 10 -e -F -E -k -e -useO_DIRECT -o $test_file
 
-                sudo `$DROP_CACHE_CMD`
+                `$DROP_CACHE_CMD`
                 sleep 5
 
                 echo "Measure data staging time -----------------"
@@ -134,7 +134,7 @@ RUN_IOR (){
 
 
                 rm -rf $actual_test_file 2> /dev/null
-                sudo `$DROP_CACHE_CMD`
+                `$DROP_CACHE_CMD`
                 sleep 5
 
             done
