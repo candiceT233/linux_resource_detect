@@ -35,14 +35,26 @@ IOR Flag notes:
 COMMENT
 
 
-NFS_PATH=$HOME/iortest
-NVME_PATH=/mnt/nvme/$USER/iortest
-LOG_FILE=./ior_ares_test.log
+
+SHARED_PATH="$($1)"
+LOCAL_PATH="$($2)"
+
+# Check if paths are valid
+if [ ! -d "$SHARED_PATH" ]; then
+    echo "Shared path $SHARED_PATH does not exist"
+    exit 1
+fi
+if [ ! -d "$LOCAL_PATH" ]; then
+    echo "Local path $LOCAL_PATH does not exist"
+    exit 1
+fi
+
+LOG_FILE=./iops_test.log
 
 spack load ior
 
 RUN_IOR (){
-    for FS in "$NFS_PATH" "$NVME_PATH"; do
+    for FS in "$SHARED_PATH" "$LOCAL_PATH"; do
         echo "Testing $FS"
         mkdir -p $FS
         for tsize in 2m 4k; do
@@ -79,17 +91,17 @@ RUN_IOR (){
                 echo "Actual test file: $actual_test_file"
 
                 # measure datastaging time in milliseconds
-                if [[ $FS == $NFS_PATH ]]; then
+                if [[ $FS == $SHARED_PATH ]]; then
                     echo "Measuring Data Stage in (from NFS to NVME)"
                     
                     # start_time=$SECONDS
-                    # cp $actual_test_file $NVME_PATH
+                    # cp $actual_test_file $LOCAL_PATH
                     # end_time=$SECONDS
                     # duration=$((end_time - start_time))
                     # echo "Data Stage in took $duration seconds"
 
                     start_time=$SECONDS
-                    mv $actual_test_file $NVME_PATH
+                    mv $actual_test_file $LOCAL_PATH
                     end_time=$SECONDS
                     duration=$((end_time - start_time))
                     echo "Data Stage in took $duration seconds"
@@ -97,14 +109,14 @@ RUN_IOR (){
                     echo "Measuring Data Stage out (from NVME to NFS)"
 
                     # start_time=$SECONDS
-                    # cp $actual_test_file $NFS_PATH
+                    # cp $actual_test_file $SHARED_PATH
                     # end_time=$SECONDS
                     # duration=$((end_time - start_time))
                     # echo "Data Stage out took $duration seconds"
 
 
                     start_time=$SECONDS
-                    mv $actual_test_file $NFS_PATH
+                    mv $actual_test_file $SHARED_PATH
                     end_time=$SECONDS
                     duration=$((end_time - start_time))
                     echo "Data Stage out took $duration seconds"
