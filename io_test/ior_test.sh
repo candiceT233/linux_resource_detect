@@ -17,10 +17,13 @@ IOR Flag notes:
 -b      : blockSize
 -s      : segmentCount
 -i      : repetitions – number of repetitions of test
--e      : fsync – perform fsync upon POSIX write close
+-e      : fsync – perform fsync upon POSIX write close (TODO: this may not be necessary)
 -o      : testFile – full name for test
 -F      : filePerProc – file-per-process
+-Y      : fsyncPerWrite – perform fsync after each POSIX write (TODO: this may not be necessary)
+-C      : reorderTasksConstant – changes task ordering to n+1 ordering for readback (only in multitasks)
 -k	    : keepFile – don’t remove the test file(s) on program exit
+-O      : string of IOR directives (e.g. -O checkRead=1,GPUid=2,summaryFormat=CSV)
 -useO_DIRECT:use direct I/ for POSIX, bypassing I/O buffers (default: 0)
 
 ## Unused 
@@ -28,6 +31,7 @@ IOR Flag notes:
 -f S    : scriptFile – test script name
 -g      : intraTestBarriers – use barriers between open, write/read, and close
 -q	    : quitOnError – during file error-checking, abort on error (incompatible with IOR-3.3.0)
+
 COMMENT
 
 
@@ -38,41 +42,84 @@ LOG_FILE=./ior_ares_test.log
 spack load ior
 
 RUN_IOR (){
-for FS in "$NFS_PATH" "$NVME_PATH"; do
-    echo "Testing $FS"
-    mkdir -p $FS
-    for tsize in 2m 1m 4k; do
-        echo "Testing $tsize"
-        test_file="$FS/ior_${tsize}.bin"
-        
-        rm $test_file 2> /dev/null
-        sudo drop_caches
+    for FS in "$NFS_PATH" "$NVME_PATH"; do
+        echo "Testing $FS"
+        mkdir -p $FS
+        for tsize in 2m 4k; do
+            echo "Testing $tsize"
 
-        echo "Writing File:"
-        # ior_write_cmd="ior -a POSIX -w -t $tsize -b 1g -s 2 -i 4 -e -F -useO_DIRECT -o $test_file"
-        # echo "ior_write_cmd : ${ior_write_cmd}"
-        # `$ior_write_cmd`
-        ior -a POSIX -w -t $tsize -b 1g -s 2 -i 4 -e -F -k -useO_DIRECT -o $test_file
+            for trial in 1; do # {1..3}
+                echo "Trial $trial"
 
-        sudo drop_caches
-        sleep 5
+                test_file="$FS/ior_${tsize}_${trial}.bin"
+                
+                rm $test_file 2> /dev/null
+                sudo drop_caches
 
-        echo "Reading File:"
-        # ior_read_cmd="ior -a POSIX -r -t $tsize -b 1g -s 2 -i 4 -e -F -E -useO_DIRECT -o $test_file"
-        # echo "ior_read_cmd : ${ior_read_cmd}"
-        # `$ior_read_cmd`
-        ior -a POSIX -r -t $tsize -b 1g -s 2 -i 4 -e -F -E -k -useO_DIRECT -o $test_file
+                echo "Writing File:"
+                ior -a POSIX -w -t $tsize -b 1g -s 10 -e -F -k -e -useO_DIRECT -o $test_file
 
-        # for mode in w r; do
-        #     echo "Testing $tsize $mode"
-        #     ior -a POSIX -$mode -t $tsize -b 1g -s 2 -o -F $FS/ior_${tsize}.bin
-        # done
-        rm -rf $test_file
-        sudo drop_caches
-        sleep 5
+                sudo drop_caches
+                sleep 5
+
+                echo "Reading File:"
+                ior -a POSIX -r -t $tsize -b 1g -s 10 -e -F -E -k -e -useO_DIRECT -o $test_file
+
+                sudo drop_caches
+                sleep 5
+
+                echo "Measure data staging time -----------------"
+                # actual_test_file=$(find $FS -name "ior_${tsize}_${trial}.bin")
+                actual_test_file="$FS/0/ior_${tsize}_${trial}.bin.00000000"
+                # Check if file exists
+                if [ ! -f "$actual_test_file" ]; then
+                    echo "File $actual_test_file does not exist"
+                    exit 1
+                fi
+                echo "Actual test file: $actual_test_file"
+
+                # measure datastaging time in milliseconds
+                if [[ $FS == $NFS_PATH ]]; then
+                    echo "Measuring Data Stage in (from NFS to NVME)"
+                    
+                    # start_time=$SECONDS
+                    # cp $actual_test_file $NVME_PATH
+                    # end_time=$SECONDS
+                    # duration=$((end_time - start_time))
+                    # echo "Data Stage in took $duration seconds"
+
+                    start_time=$SECONDS
+                    mv $actual_test_file $NVME_PATH
+                    end_time=$SECONDS
+                    duration=$((end_time - start_time))
+                    echo "Data Stage in took $duration seconds"
+                else
+                    echo "Measuring Data Stage out (from NVME to NFS)"
+
+                    # start_time=$SECONDS
+                    # cp $actual_test_file $NFS_PATH
+                    # end_time=$SECONDS
+                    # duration=$((end_time - start_time))
+                    # echo "Data Stage out took $duration seconds"
+
+
+                    start_time=$SECONDS
+                    mv $actual_test_file $NFS_PATH
+                    end_time=$SECONDS
+                    duration=$((end_time - start_time))
+                    echo "Data Stage out took $duration seconds"
+                fi
+
+
+                rm -rf $actual_test_file 2> /dev/null
+                sudo drop_caches
+                sleep 5
+
+            done
+        done
+        echo ""
+        echo "$FS tests done -----------------"
     done
-    echo "$FS tests done -----------------"
-done
 }
 
 
