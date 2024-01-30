@@ -38,6 +38,15 @@ COMMENT
 
 SHARED_PATH="$1"
 LOCAL_PATH="$2"
+DROP_CACHE_CMD="$3"
+
+# Print Usage
+if [ $# -ne 3 ]; then
+    echo "Usage: $0 <shared_path> <local_path> <drop_cache_cmd>"
+    echo "Example: $0 /mnt/nfs /mnt/nvme \"echo 3 > /proc/sys/vm/drop_caches\""
+    exit 1
+fi
+
 
 # Check if paths are valid
 if [ ! -d "$SHARED_PATH" ]; then
@@ -67,18 +76,18 @@ RUN_IOR (){
                 test_file="$FS/ior_${tsize}_${trial}.bin"
                 
                 rm $test_file 2> /dev/null
-                sudo drop_caches
+                sudo `$DROP_CACHE_CMD`
 
                 echo "Writing File:"
                 ior -a POSIX -w -t $tsize -b 1g -s 10 -e -F -k -e -useO_DIRECT -o $test_file
 
-                sudo drop_caches
+                sudo `$DROP_CACHE_CMD`
                 sleep 5
 
                 echo "Reading File:"
                 ior -a POSIX -r -t $tsize -b 1g -s 10 -e -F -E -k -e -useO_DIRECT -o $test_file
 
-                sudo drop_caches
+                sudo `$DROP_CACHE_CMD`
                 sleep 5
 
                 echo "Measure data staging time -----------------"
@@ -125,7 +134,7 @@ RUN_IOR (){
 
 
                 rm -rf $actual_test_file 2> /dev/null
-                sudo drop_caches
+                sudo `$DROP_CACHE_CMD`
                 sleep 5
 
             done
