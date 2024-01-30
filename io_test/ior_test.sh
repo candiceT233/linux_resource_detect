@@ -36,8 +36,8 @@ COMMENT
 
 
 
-SHARED_PATH="$($1)"
-LOCAL_PATH="$($2)"
+SHARED_PATH="$1"
+LOCAL_PATH="$2"
 
 # Check if paths are valid
 if [ ! -d "$SHARED_PATH" ]; then
