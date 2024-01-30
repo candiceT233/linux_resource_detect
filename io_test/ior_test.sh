@@ -55,6 +55,7 @@ spack load ior
 
 RUN_IOR (){
     for FS in "$SHARED_PATH" "$LOCAL_PATH"; do
+        FS="$FS/iortest" # add iortest folder to path
         echo "Testing $FS"
         mkdir -p $FS
         for tsize in 2m 4k; do
