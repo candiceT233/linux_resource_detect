@@ -239,7 +239,7 @@ move_data_to_dest(){
         else
             [ $LOG_LEVEL -eq 1 ] && echo "Moving $full_data_path to $dest_path"
             start_time=$(date +%s.%N)        
-            mv "$full_data_path" "$dest_path"
+            cp -r "$full_data_path" "$dest_path"
             end_time=$(date +%s.%N)
             duration=$(echo "$end_time - $start_time" | bc)
             let moved_data++
@@ -314,7 +314,7 @@ restore_data(){
         if [ -f "$full_dest_file" ]; then
             [ $LOG_LEVEL -eq 1 ] && echo "Restoring $full_dest_file to $full_data_path"
             start_time=$(date +%s.%N)        
-            mv "$full_dest_file" "$full_data_path"
+            cp -r "$full_dest_file" "$full_data_path"
             end_time=$(date +%s.%N)
             echo "Restored $full_dest_file to $full_data_path in $(echo "$end_time - $start_time" | bc) seconds"
             [ $LOG_LEVEL -eq 1 ] &&  ls $full_dest_file > /dev/null 2>&1 && echo "$data_file restored failed" || echo "$data_file restored successfully"
