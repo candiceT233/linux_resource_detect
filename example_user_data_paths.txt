@@ -1,2 +1,0 @@
-~/scripts/linux_resource_detect/mydata1
-~/scripts/linux_resource_detect/mydata2

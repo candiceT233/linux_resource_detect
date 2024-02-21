@@ -6,7 +6,7 @@ CHECK_USER="$USER"
 REMOTE_SERVER="local"
 DIR_CONFIG_FILE="dir_config.csv"
 USER_DATA_LIST=""
-MODE=1
+MODE=0
 
 # Function to print usage
 PRINT_USAGE () {

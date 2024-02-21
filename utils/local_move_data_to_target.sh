@@ -15,7 +15,7 @@ usage() {
   echo "Options:"
   echo "  <DIR_CONFIG_FILE>   Path to the directory configuration file."
   echo "  <USER_DATA_LIST>    Path to the user data list file."
-  echo "  <MODE>              Mode (0 - do not restore user data, 1 - restore user data, default: 1 for testing)."
+  echo "  <MODE>              Mode (0 - do not restore user data, 1 - restore user data, default: 0 for testing)."
   echo "  <LOG_LEVEL>         Log level (0 - minimal log, 1 - full log, default: 1)."
 }
 
@@ -83,7 +83,7 @@ PRINT_CONFIG () {
 
 # ---- Parsing the user data list file and check the file size
 user_file_list=()
-
+"""
 while IFS=, read -r file_path
 do
     # Evaluate the file path to resolve environment variables
@@ -94,6 +94,31 @@ do
         user_file_list+=("$resolved_path")
     else
         echo "Error: $resolved_path does not exist, not added."
+        continue
+    fi
+done < "$USER_DATA_LIST"
+"""
+
+while IFS=, read -r file_path
+do
+    # Evaluate the file path to resolve environment variables
+    eval "resolved_path=$file_path"
+    # Check if the path exists
+    if [ ! -e "$resolved_path" ]; then
+        echo "Error: $resolved_path does not exist, not added."
+        continue
+    fi
+
+
+    # Check if the path is a file
+    if [ -f "$resolved_path" ]; then
+        echo "INFO: $resolved_path is a file"
+        user_file_list+=("$resolved_path")
+    elif [ -d "$resolved_path" ]; then
+        echo "INFO: $resolved_path is a directory"
+    	user_file_list+=("$resolved_path")
+    else
+        echo "Error: $resolved_path is neither a file nor a directory, not added."
         continue
     fi
 done < "$USER_DATA_LIST"
@@ -262,6 +287,7 @@ move_data_to_dest "$dest_path"
 
 
 # ---- Check if destination path has the user files
+"""
 check_dest_data(){
     for full_data_path in "${user_file_list[@]}"; do
         # get file base name
@@ -278,6 +304,43 @@ check_dest_data(){
         fi
     done
 }
+"""
+
+check_dest_data(){
+    for full_data_path in "${user_file_list[@]}"; do
+        # check if full_data_path is a directory
+        if [ -d "$full_data_path" ]; then
+            # iterate over files in the directory
+            for data_file in "$full_data_path"/*; do
+                # get file base name
+                filename=$(basename "$data_file")
+
+                # check if full_dest_file exits
+                if [ -f "$data_file" ]; then
+                    [ $LOG_LEVEL -eq 1 ] && echo "Successfully moved to $data_file"
+                    [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $data_file`"
+                    echo "$data_file" >> "$DEST_FILES"
+                else
+                    echo "Error: $full_data_path/$filename does not exist"
+                fi
+            done
+        else
+            # get file base name
+            data_file=$(basename "$full_data_path")
+            full_dest_file="$dest_path/$data_file"
+
+            # check if full_dest_file exits
+            if [ -f "$full_dest_file" ]; then
+                [ $LOG_LEVEL -eq 1 ] && echo "Successfully moved to $full_dest_file"
+                [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
+                echo "$full_dest_file" >> "$DEST_FILES"
+            else
+                echo "Error: $full_dest_file does not exist"
+            fi
+        fi
+    done
+}
+
 
 check_dest_data
 
