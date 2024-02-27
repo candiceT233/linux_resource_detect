@@ -61,27 +61,8 @@ time_2=$(($(date +%s%N)/1000000))
 
 echo "Start siftSTFByMisfit.py --------------------------------"
 
-python $IterDecon_BIN/siftSTFByMisfit.py \
-    $EXP_DATA_PATH/b916-pb-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/g43a-ta-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/d27-xt-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/nc05-xq-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/q43a-ta-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/ss64-xi-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/enh-ic-00_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/ss72-xi-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/maja-xv-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/n02d-ta-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/i55a-ta-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/149a-ta-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/bar-ci-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/dac-lb-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/d34-xt-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/pats-ps-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/tato-iu-10_ldsp.lht_iter_g1.stf \ 
-    $EXP_DATA_PATH/gugu-xf-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/b026-pb-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/frb-cn-_ldsp.lht_iter_g1.stf
+python $IterDecon_BIN/siftSTFByMisfit.py b916-pb-_ldsp.lht_iter_g1.stf g43a-ta-_ldsp.lht_iter_g1.stf d27-xt-_ldsp.lht_iter_g1.stf nc05-xq-_ldsp.lht_iter_g1.stf q43a-ta-_ldsp.lht_iter_g1.stf ss64-xi-_ldsp.lht_iter_g1.stf enh-ic-00_ldsp.lht_iter_g1.stf ss72-xi-_ldsp.lht_iter_g1.stf maja-xv-_ldsp.lht_iter_g1.stf n02d-ta-_ldsp.lht_iter_g1.stf i55a-ta-_ldsp.lht_iter_g1.stf 149a-ta-_ldsp.lht_iter_g1.stf bar-ci-_ldsp.lht_iter_g1.stf dac-lb-_ldsp.lht_iter_g1.stf d34-xt-_ldsp.lht_iter_g1.stf pats-ps-_ldsp.lht_iter_g1.stf tato-iu-10_ldsp.lht_iter_g1.stf gugu-xf-_ldsp.lht_iter_g1.stf b026-pb-_ldsp.lht_iter_g1.stf frb-cn-_ldsp.lht_iter_g1.stf
+
 
 time_3=$(($(date +%s%N)/1000000))
 
