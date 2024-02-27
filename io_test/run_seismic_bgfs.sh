@@ -10,7 +10,7 @@ EXP_DATA_PATH=/rcfs/projects/chess/$USER/seismic_data # BeeGFS
 MSHOCK_DATA_PATH=$EXP_DATA_PATH/MShock
 EGF_INPUT_PATH=$EXP_DATA_PATH/EGF
 
-mkdir -p $EXP_DATA_PATH
+cd $EXP_DATA_PATH
 
 # record start time in milliseconds
 time_1=$(($(date +%s%N)/1000000))
