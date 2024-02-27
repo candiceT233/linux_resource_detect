@@ -65,6 +65,8 @@ do
     fi
 done < "$USER_DATA_LIST"
 
+
+declare -A move_data_perf
 check_data_moving_performance(){
     local dest_file="$1"
     local duration="$2"
