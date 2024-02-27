@@ -103,12 +103,6 @@ RUN_IOR (){
                 # measure datastaging time in milliseconds
                 if [[ $FS == $SHARED_PATH ]]; then
                     echo "Measuring Data Stage in (from NFS to NVME)"
-                    
-                    # start_time=$SECONDS
-                    # cp $actual_test_file $LOCAL_PATH
-                    # end_time=$SECONDS
-                    # duration=$((end_time - start_time))
-                    # echo "Data Stage in took $duration seconds"
 
                     start_time=$SECONDS
                     mv $actual_test_file $LOCAL_PATH
@@ -117,13 +111,6 @@ RUN_IOR (){
                     echo "Data Stage in took $duration seconds"
                 else
                     echo "Measuring Data Stage out (from NVME to NFS)"
-
-                    # start_time=$SECONDS
-                    # cp $actual_test_file $SHARED_PATH
-                    # end_time=$SECONDS
-                    # duration=$((end_time - start_time))
-                    # echo "Data Stage out took $duration seconds"
-
 
                     start_time=$SECONDS
                     mv $actual_test_file $SHARED_PATH
