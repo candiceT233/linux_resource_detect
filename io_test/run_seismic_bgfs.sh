@@ -67,11 +67,11 @@ time_3=$(($(date +%s%N)/1000000))
 
 # Calculate duration, convert milliseconds to seconds
 echo "Duration sG1IterDcon: $((time_2-time_1)) ms [$(echo "scale=2; ($time_2-$time_1)/1000" | bc) sec]"
-echo "Duration siftSTFByMisfit.py: $((time_3-time_2)) ms [$(echo "scale=2; ($time_3-$time_2)/1000" | bc) sec
+echo "Duration siftSTFByMisfit.py: $((time_3-time_2)) ms [$(echo "scale=2; ($time_3-$time_2)/1000" | bc) sec"
 
 echo "End --------------------------------"
 
 # Check if the output files are generated
 set -x
-ls -l $EXP_DATA_PATH | grep ".stf" | wc -l
-ls -l $EXP_DATA_PATH | grep "good-fit" | wc -l
+ls -l $EXP_DATA_PATH | grep stf | wc -l
+ls -l $EXP_DATA_PATH | grep good-fit | wc -l
