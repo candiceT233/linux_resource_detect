@@ -40,21 +40,6 @@ echo "-------------------------------------"
 
 # ---- Parsing the user data list file and check the file size
 user_file_list=()
-"""
-while IFS=, read -r file_path
-do
-    # Evaluate the file path to resolve environment variables
-    eval "resolved_path=$file_path"
-
-    # if file exist, echo
-    if [ -f "$resolved_path" ]; then
-        user_file_list+=("$resolved_path")
-    else
-        echo "Error: $resolved_path does not exist, not added."
-        continue
-    fi
-done < "$USER_DATA_LIST"
-"""
 
 while IFS=, read -r file_path
 do
