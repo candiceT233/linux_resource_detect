@@ -6,7 +6,7 @@
 set -e
 
 IterDecon_BIN=///qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/bin
-EXP_DATA_PATH=/rcfs/projects/chess/$USER/seismic_data # BeeGFS
+EXP_DATA_PATH=/rcfs/scratch/$USER/seismic_data # BeeGFS
 MSHOCK_DATA_PATH=$EXP_DATA_PATH/MShock
 EGF_INPUT_PATH=$EXP_DATA_PATH/EGF
 
@@ -61,7 +61,7 @@ time_2=$(($(date +%s%N)/1000000))
 
 echo "Start siftSTFByMisfit.py --------------------------------"
 
-python $IterDecon_BIN/sG1IterDecon/siftSTFByMisfit.py \
+python $IterDecon_BIN/siftSTFByMisfit.py \
     $EXP_DATA_PATH/b916-pb-_ldsp.lht_iter_g1.stf \
     $EXP_DATA_PATH/g43a-ta-_ldsp.lht_iter_g1.stf \
     $EXP_DATA_PATH/d27-xt-_ldsp.lht_iter_g1.stf \
