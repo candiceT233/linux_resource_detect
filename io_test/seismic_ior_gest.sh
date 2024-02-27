@@ -36,8 +36,7 @@ COMMENT
 
 
 
-SHARED_PATH="$1"
-LOCAL_PATH="$2"
+TEST_DIR="$1"
 #DROP_CACHE_CMD="$3"
 DROP_CACHE_CMD="sudo /sbin/sysctl vm.drop_caches=3"
 
@@ -50,12 +49,8 @@ fi
 
 
 # Check if paths are valid
-if [ ! -d "$SHARED_PATH" ]; then
-    echo "Shared path $SHARED_PATH does not exist"
-    exit 1
-fi
-if [ ! -d "$LOCAL_PATH" ]; then
-    echo "Local path $LOCAL_PATH does not exist"
+if [ ! -d "$TEST_DIR" ]; then
+    echo "Directory $TEST_DIR does not exist"
     exit 1
 fi
 
@@ -64,7 +59,7 @@ LOG_FILE=./iops_test.log
 spack load ior
 
 RUN_IOR (){
-    for FS in "$LOCAL_PATH"; do
+    for FS in "$TEST_DIR"; do
         FS="$FS/iortest" # add iortest folder to path
         echo "Testing $FS"
         mkdir -p $FS
@@ -73,7 +68,7 @@ RUN_IOR (){
 
             for trial in 2 3; do # {1..3}
                 echo "Trial $trial"
-		test_name="ior_${tsize}_${trial}"
+                test_name="ior_${tsize}_${trial}"
 
                 test_file="$FS/${test_name}.bin"
                 
@@ -102,24 +97,24 @@ RUN_IOR (){
                 fi
                 echo "Actual test file: $actual_test_file"
 
-                # measure datastaging time in milliseconds
-                if [[ $FS == $SHARED_PATH ]]; then
-                    echo "Measuring Data Stage in (from NFS to NVME)"
+                # # measure datastaging time in milliseconds
+                # if [[ $FS == $TEST_DIR ]]; then
+                #     echo "Measuring Data Stage in (from NFS to NVME)"
 
-                    start_time=$SECONDS
-                    mv $actual_test_file $LOCAL_PATH
-                    end_time=$SECONDS
-                    duration=$((end_time - start_time))
-                    echo "Data Stage in took $duration seconds"
-                else
-                    echo "Measuring Data Stage out (from NVME to NFS)"
+                #     start_time=$SECONDS
+                #     mv $actual_test_file $TEST_DIR
+                #     end_time=$SECONDS
+                #     duration=$((end_time - start_time))
+                #     echo "Data Stage in took $duration seconds"
+                # else
+                #     echo "Measuring Data Stage out (from NVME to NFS)"
 
-                    start_time=$SECONDS
-                    mv $actual_test_file $SHARED_PATH
-                    end_time=$SECONDS
-                    duration=$((end_time - start_time))
-                    echo "Data Stage out took $duration seconds"
-                fi
+                #     start_time=$SECONDS
+                #     mv $actual_test_file $TEST_DIR
+                #     end_time=$SECONDS
+                #     duration=$((end_time - start_time))
+                #     echo "Data Stage out took $duration seconds"
+                # fi
 
 
                 rm -rf $actual_test_file 2> /dev/null
