@@ -1,11 +1,12 @@
 #!/bin/bash
 
-MSHOCK_DATA_PATH=///qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/input/MShock
-EGF_INPUT_PATH=///qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/input/EGF
+# MSHOCK_DATA_PATH=///qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/input/MShock
+# EGF_INPUT_PATH=///qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/input/EGF
 
 IterDecon_BIN=///qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/bin
 EXP_DATA_PATH=/rcfs/projects/chess/$USER/seismic_data # BeeGFS
-# EXP_DATA_PATH=///scratch/$USER/seismic_data # Local SSD
+MSHOCK_DATA_PATH=$EXP_DATA_PATH/MShock
+EGF_INPUT_PATH=$EXP_DATA_PATH/EGF
 
 mkdir -p $EXP_DATA_PATH
 
