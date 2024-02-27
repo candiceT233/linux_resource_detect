@@ -182,23 +182,24 @@ move_data_to_dest "$DEST_PATH"
 # ---- Check if destination path has the user files
 
 check_dest_data(){
+    local dest_path="$1"
     for full_data_path in "${user_file_list[@]}"; do
         # check if full_data_path is a directory
         if [ -d "$full_data_path" ]; then
-            # Check if the directory exists
-            if [ ! -d "$full_data_path" ]; then
-                echo "Error: $full_data_path does not exist"
+            # Check if the destination exists
+            if [ ! -d "$dest_path" ]; then
+                echo "Error: $dest_path does not exist"
                 continue
             fi
 
             # Check if the directory is empty
-            if [ -z "$(ls -A $full_data_path)" ]; then
-                echo "Error: $full_data_path is empty"
+            if [ -z "$(ls -A $dest_path)" ]; then
+                echo "Error: $dest_path is empty"
                 continue
             else
-                echo "Successfully moved to $full_data_path"
+                echo "Successfully moved to $dest_path"
                 # Display size of subdirectories/subfiles
-                [ $LOG_LEVEL -eq 1 ] && du -h $full_data_path
+                [ $LOG_LEVEL -eq 1 ] && du -h $dest_path/*
             fi
 
             # # iterate over files in the directory
@@ -235,7 +236,7 @@ check_dest_data(){
 }
 
 
-check_dest_data
+check_dest_data "$DEST_PATH"
 
 
 
