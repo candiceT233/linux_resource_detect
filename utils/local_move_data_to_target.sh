@@ -135,8 +135,8 @@ move_data_to_dest(){
             duration=$(echo "$end_time - $start_time" | bc)
             let moved_dir++
             # store performance statistics
-            bw=$(check_dir_moving_performance "$dest_data" "$duration")
-            move_data_perf[$moved_data,"Dest"]=$dest_data
+            bw=$(check_dir_moving_performance "$dest_path" "$duration")
+            move_data_perf[$moved_data,"Dest"]=$dest_path
             move_data_perf[$moved_data,"Duration"]=$duration
             move_data_perf[$moved_data,"Bandwidth"]=$bw
         else
