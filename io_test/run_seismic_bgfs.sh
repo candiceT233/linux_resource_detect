@@ -3,6 +3,8 @@
 # MSHOCK_DATA_PATH=///qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/input/MShock
 # EGF_INPUT_PATH=///qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/input/EGF
 
+set -e
+
 IterDecon_BIN=///qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/bin
 EXP_DATA_PATH=/rcfs/projects/chess/$USER/seismic_data # BeeGFS
 MSHOCK_DATA_PATH=$EXP_DATA_PATH/MShock
