@@ -108,6 +108,22 @@ check_dir_moving_performance(){
     echo "$bandwidth"
 }
 
+# ---- Display movement performance statistics
+display_movement_performance_stat(){
+    echo "-------------------------------------"
+    # check if there is any data moved
+    if [ $moved_data -eq 0 ]; then
+        echo "No data moved"
+        return
+    else
+        echo "Data movement performance statistics:"
+        for i in $(seq 1 $moved_data); do
+            echo "  - ${move_data_perf[$i,Dest]}: ${move_data_perf[$i,Duration]} seconds, ${move_data_perf[$i,Bandwidth]} B/s"
+        done
+    fi
+    echo "-------------------------------------"
+}
+
 move_data_to_dest(){
     dest_path="$1"
     moved_data=0
@@ -120,7 +136,7 @@ move_data_to_dest(){
             cp -r "$full_data_path" "$dest_path"
             end_time=$(date +%s.%N)
             duration=$(echo "$end_time - $start_time" | bc)
-            let moved_dir++
+            let moved_data++
             # store performance statistics
             bw=$(check_dir_moving_performance "$dest_path" "$duration")
             move_data_perf[$moved_data,"Dest"]=$dest_path
@@ -155,8 +171,11 @@ move_data_to_dest(){
             fi
         fi
     done
+
+    [ $LOG_LEVEL -eq 1 ] && display_movement_performance_stat
 }
 
+moved_data=0
 move_data_to_dest "$DEST_PATH"
 
 
@@ -200,23 +219,7 @@ check_dest_data(){
 
 check_dest_data
 
-# ---- Display movement performance statistics
-display_movement_performance_stat(){
-    echo "-------------------------------------"
-    # check if there is any data moved
-    if [ $moved_data -eq 0 ]; then
-        echo "No data moved"
-        return
-    else
-        echo "Data movement performance statistics:"
-        for i in $(seq 1 $moved_data); do
-            echo "  - ${move_data_perf[$i,Dest]}: ${move_data_perf[$i,Duration]} seconds, ${move_data_perf[$i,Bandwidth]} B/s"
-        done
-    fi
-    echo "-------------------------------------"
-}
 
-[ $LOG_LEVEL -eq 1 ] && display_movement_performance_stat
 
 
 # restore data to original path

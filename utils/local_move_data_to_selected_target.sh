@@ -238,7 +238,6 @@ display_dest_path (){
 [ $LOG_LEVEL -eq 1 ] && display_dest_path $key
 
 # ---- Display movement performance statistics
-moved_data=0
 display_movement_performance_stat(){
     echo "-------------------------------------"
     # check if there is any data moved
@@ -253,7 +252,6 @@ display_movement_performance_stat(){
     fi
     echo "-------------------------------------"
 }
-
 
 
 # check to make sure user data is not already in the best_bw_item
@@ -301,6 +299,7 @@ move_data_to_dest(){
     [ $LOG_LEVEL -eq 1 ] && display_movement_performance_stat
 }
 
+moved_data=0
 dest_path="${best_bw_item[Actual_Path]}"
 move_data_to_dest "$dest_path"
 
