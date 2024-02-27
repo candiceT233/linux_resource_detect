@@ -3,7 +3,7 @@
 # Default values
 DEST_FILES="dest_data_list.txt"
 rm -rf $DEST_FILES
-DIR_CONFIG_FILE="$1"
+DEST_PATH="$1"
 USER_DATA_LIST="$2"
 MODE="$3"
 LOG_LEVEL="$4"
@@ -11,9 +11,9 @@ LOG_LEVEL="$4"
 
 # Function to display usage instructions
 usage() {
-  echo "Usage: $0 <DIR_CONFIG_FILE> <USER_DATA_LIST> <MODE> <LOG_LEVEL>"
+  echo "Usage: $0 <DEST_PATH> <USER_DATA_LIST> <MODE> <LOG_LEVEL>"
   echo "Options:"
-  echo "  <DIR_CONFIG_FILE>   Path to the directory configuration file."
+  echo "  <DEST_PATH>         Destination path to where data will be copied."
   echo "  <USER_DATA_LIST>    Path to the user data list file."
   echo "  <MODE>              Mode (0 - do not restore user data, 1 - restore user data, default: 0 for testing)."
   echo "  <LOG_LEVEL>         Log level (0 - minimal log, 1 - full log, default: 1)."
@@ -27,7 +27,7 @@ fi
 
 # Main script
 
-echo "Current storage config file: $DIR_CONFIG_FILE"
+echo "Current storage config file: $DEST_PATH"
 echo "User data path list file: $USER_DATA_LIST"
 echo "LOG_LEVEL: $LOG_LEVEL"
 echo "DEST_FILES: $DEST_FILES"
@@ -38,217 +38,6 @@ else
 fi
 echo "-------------------------------------"
 
-
-# Function to convert bandwidth to B/s
-convert_bandwidth_to_Bps() {
-    local bandwidth="$1"
-    local multiplier=1
-
-    case "$bandwidth" in
-        *KB/s)
-            multiplier=1024
-            ;;
-        *MB/s)
-            multiplier=1048576  # 1024^2
-            ;;
-        *GB/s)
-            multiplier=1073741824  # 1024^3
-            ;;
-    esac
-
-    # Extract the numeric part of the bandwidth value
-    local numeric_value="$(echo "$bandwidth" | grep -oE '[0-9.]+')"
-
-    # Perform the conversion
-    local Bps_value=$(bc <<< "$numeric_value * $multiplier")
-
-    # echo "Converting from $bandwidth to $Bps_value B/s"
-
-    echo "$Bps_value"
-}
-
-PRINT_CONFIG () {
-    echo "Printing all dest_path_conf config"
-    # Print the list of associative arrays
-    # loop from i=1 up to i=$path_idx
-    for i in $(seq 1 $path_idx); do
-        echo "[$i]-------------------------------------"
-        for element in "${header[@]}"; do
-            # echo "dest_path_conf[$i,$element] = ${dest_path_conf[$i,${element}]}"
-            echo "$element = ${dest_path_conf[$i,${element}]}"
-        done
-        echo "-------------------------------------"
-    done
-}
-
-# ---- Parsing the user data list file and check the file size
-user_file_list=()
-"""
-while IFS=, read -r file_path
-do
-    # Evaluate the file path to resolve environment variables
-    eval "resolved_path=$file_path"
-
-    # if file exist, echo
-    if [ -f "$resolved_path" ]; then
-        user_file_list+=("$resolved_path")
-    else
-        echo "Error: $resolved_path does not exist, not added."
-        continue
-    fi
-done < "$USER_DATA_LIST"
-"""
-
-while IFS=, read -r file_path
-do
-    # Evaluate the file path to resolve environment variables
-    eval "resolved_path=$file_path"
-    # Check if the path exists
-    if [ ! -e "$resolved_path" ]; then
-        echo "Error: $resolved_path does not exist, not added."
-        continue
-    fi
-
-
-    # Check if the path is a file
-    if [ -f "$resolved_path" ]; then
-        echo "INFO: $resolved_path is a file"
-        user_file_list+=("$resolved_path")
-    elif [ -d "$resolved_path" ]; then
-        echo "INFO: $resolved_path is a directory"
-    	user_file_list+=("$resolved_path")
-    else
-        echo "Error: $resolved_path is neither a file nor a directory, not added."
-        continue
-    fi
-done < "$USER_DATA_LIST"
-
-TOTAL_REQUIRED_STORAGE=0
-for file_path in "${user_file_list[@]}"; do
-    file_size=$(stat -c%s "$file_path")
-    [ $LOG_LEVEL -eq 1 ] && echo "file_path: $file_path, file_size: $file_size"    
-    TOTAL_REQUIRED_STORAGE=$((TOTAL_REQUIRED_STORAGE + file_size))
-done
-[ $LOG_LEVEL -eq 1 ] && echo "TOTAL_REQUIRED_STORAGE: $TOTAL_REQUIRED_STORAGE"
-
-# ---- Parsing discovered storage configs
-
-# Read the first line (header)
-IFS=, read -r first_line < "$DIR_CONFIG_FILE"
-# Split the line into an array using , as the delimiter
-IFS=',' read -ra header <<< "$first_line"
-
-
-# Declare the global dest_path_conf variable
-declare -A dest_path_conf
-
-path_idx=0
-
-{ 
-read # discard first line
-while IFS=, read -r actual_path filesystem type size used avail use_percent mounted_on mode access_right read_latency read_bandwidth write_latency write_bandwidth
-do
-    
-    # Create an associative array for each line
-    declare -A row
-    row["Actual_Path"]=$actual_path
-    row["Filesystem"]=$filesystem
-    row["Type"]=$type
-    row["Size"]=$size
-    row["Used"]=$used
-    # convert $avail from KB to Bytes
-    avail=$(bc <<< "$avail * 1024")
-    row["Avail_B"]=$avail
-    row["Use%"]=$use_percent
-    row["Mounted_on"]=$mounted_on
-    row["Mode"]=$mode
-    row["Access_Right"]=$access_right
-    row["Read_Latency"]=$read_latency
-    # row["Read_Bandwidth"]=$read_bandwidth
-    row["Read_Bandwidth"]=$(convert_bandwidth_to_Bps "$read_bandwidth")
-    row["Write_Latency"]=$write_latency
-    # row["Write_Bandwidth"]=$write_bandwidth
-    row["Write_Bandwidth"]=$(convert_bandwidth_to_Bps "$write_bandwidth")
-
-    # check if the path size is more than TOTAL_REQUIRED_STORAGE
-    if (( $(echo "$avail > $TOTAL_REQUIRED_STORAGE" | bc -l) )); then
-        # Add the new associative array to the dest_path_conf
-        let path_idx++
-        for key in "${!row[@]}"; do
-            dest_path_conf[$path_idx,$key]=${row[$key]}
-        done
-    else
-        [ $LOG_LEVEL -eq 1 ] && echo "WARNING: $actual_path[$avail] not enough storage for [$TOTAL_REQUIRED_STORAGE]"
-    fi
-
-
-done
-} < "$DIR_CONFIG_FILE"
-
-
-# PRINT_CONFIG
-
-# ---- Find the item with the highest bandwidth
-# Initialize best_bw_item as an empty associative array
-declare -A best_bw_item
-
-FIND_BEST_BW_ITEM() {
-    local key="$1"  # Specify the key (e.g., 'Read_Bandwidth' or 'Write_Bandwidth')
-    local highest_bandwidth=0
-
-    # declare -A aarr="$2"
-    declare -A aarr
-
-    # Iterate through the associative arrays
-    for i in $(seq 1 $path_idx); do
-        bandwidth_numeric=$(bc <<< "${dest_path_conf[$i,${key}]}")
-        cur_path="${dest_path_conf[$i,Actual_Path]}"
-
-        # Compare and update if it's the highest so far
-        if (( $(echo "$bandwidth_numeric > $highest_bandwidth" | bc -l) )); then
-            highest_bandwidth=$bandwidth_numeric
-            # Copy all elements of the current associative array into best_bw_item
-            for element in "${header[@]}"; do
-                aarr["$element"]=${dest_path_conf[$i,${element}]}
-            done
-            aarr["path_idx"]=$i # add path index
-        fi
-    done
-
-    declare -p aarr
-}
-
-# Example usage
-key="Write_Bandwidth"
-tmp=$(FIND_BEST_BW_ITEM "$key")
-
-result=$(echo "$tmp" | sed "s/aarr=/best_bw_item=/")
-eval $result
-
-display_dest_path (){
-    local key="$1"
-    echo "-------------------------------------"
-    echo "Best $key path config:"
-    for element in "${header[@]}"; do
-        echo "  - $element : ${best_bw_item[$element]}"
-    done
-    echo "-------------------------------------"
-}
-
-[ $LOG_LEVEL -eq 1 ] && display_dest_path $key
-
-
-# check to make sure user data is not already in the best_bw_item
-declare -A move_data_perf
-check_data_moving_performance(){
-    local dest_file="$1"
-    local duration="$2"
-    # get dest_file size in bytes
-    local dest_file_size=$(stat -c%s "$dest_file")
-    # calculate bandwidth
-    local bandwidth=$(bc <<< "$dest_file_size / $duration")
-    echo "$bandwidth"
-}
 
 move_data_to_dest(){
     dest_path="$1"
@@ -282,8 +71,7 @@ move_data_to_dest(){
     done
 }
 
-dest_path="${best_bw_item[Actual_Path]}"
-move_data_to_dest "$dest_path"
+move_data_to_dest "$DEST_PATH"
 
 
 # ---- Check if destination path has the user files
