@@ -161,7 +161,7 @@ move_data_to_dest(){
 
                 dest_data="$dest_path/$data_file"
                 # store performance statistics
-                bw=$(check_data_moving_performance "$dest_data" "$duration")
+                bw=$(check_data_moving_performance "$full_data_path" "$duration")
                 move_data_perf[$moved_data,"Dest"]=$dest_data
                 move_data_perf[$moved_data,"Duration"]=$duration
                 move_data_perf[$moved_data,"Bandwidth"]=$bw
@@ -201,23 +201,6 @@ check_dest_data(){
                 # Display size of subdirectories/subfiles
                 [ $LOG_LEVEL -eq 1 ] && du -h $dest_path/*
             fi
-
-            # # iterate over files in the directory
-            # for data_file in "$full_data_path"/*; do
-            #     # get file base name
-            #     filename=$(basename "$data_file")
-            #     full_dest_file="$full_data_path/$filename"
-
-            #     # check if full_dest_file exits
-            #     if [ -f "$full_dest_file" ]; then
-            #         [ $LOG_LEVEL -eq 1 ] && echo "Successfully moved to $full_dest_file"
-            #         [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
-            #         echo "$full_dest_file" >> "$DEST_FILES"
-            #     else
-            #         echo "Error: $full_dest_file does not exist"
-            #     fi
-            # done
-
         else
             # get file base name
             data_file=$(basename "$full_data_path")
