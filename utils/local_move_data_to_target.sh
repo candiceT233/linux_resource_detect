@@ -189,14 +189,15 @@ check_dest_data(){
             for data_file in "$full_data_path"/*; do
                 # get file base name
                 filename=$(basename "$data_file")
+                full_dest_file="$full_data_path/$filename"
 
                 # check if full_dest_file exits
-                if [ -f "$data_file" ]; then
-                    [ $LOG_LEVEL -eq 1 ] && echo "Successfully moved to $data_file"
-                    [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $data_file`"
-                    echo "$data_file" >> "$DEST_FILES"
+                if [ -f "$full_dest_file" ]; then
+                    [ $LOG_LEVEL -eq 1 ] && echo "Successfully moved to $full_dest_file"
+                    [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
+                    echo "$full_dest_file" >> "$DEST_FILES"
                 else
-                    echo "Error: $full_data_path/$filename does not exist"
+                    echo "Error: $full_dest_file does not exist"
                 fi
             done
         else
