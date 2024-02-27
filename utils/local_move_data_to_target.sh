@@ -185,21 +185,38 @@ check_dest_data(){
     for full_data_path in "${user_file_list[@]}"; do
         # check if full_data_path is a directory
         if [ -d "$full_data_path" ]; then
-            # iterate over files in the directory
-            for data_file in "$full_data_path"/*; do
-                # get file base name
-                filename=$(basename "$data_file")
-                full_dest_file="$full_data_path/$filename"
+            # Check if the directory exists
+            if [ ! -d "$full_data_path" ]; then
+                echo "Error: $full_data_path does not exist"
+                continue
+            fi
 
-                # check if full_dest_file exits
-                if [ -f "$full_dest_file" ]; then
-                    [ $LOG_LEVEL -eq 1 ] && echo "Successfully moved to $full_dest_file"
-                    [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
-                    echo "$full_dest_file" >> "$DEST_FILES"
-                else
-                    echo "Error: $full_dest_file does not exist"
-                fi
-            done
+            # Check if the directory is empty
+            if [ -z "$(ls -A $full_data_path)" ]; then
+                echo "Error: $full_data_path is empty"
+                continue
+            else
+                echo "Successfully moved to $full_data_path"
+                # Display size of subdirectories/subfiles
+                [ $LOG_LEVEL -eq 1 ] && du -h $full_data_path
+            fi
+
+            # # iterate over files in the directory
+            # for data_file in "$full_data_path"/*; do
+            #     # get file base name
+            #     filename=$(basename "$data_file")
+            #     full_dest_file="$full_data_path/$filename"
+
+            #     # check if full_dest_file exits
+            #     if [ -f "$full_dest_file" ]; then
+            #         [ $LOG_LEVEL -eq 1 ] && echo "Successfully moved to $full_dest_file"
+            #         [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
+            #         echo "$full_dest_file" >> "$DEST_FILES"
+            #     else
+            #         echo "Error: $full_dest_file does not exist"
+            #     fi
+            # done
+
         else
             # get file base name
             data_file=$(basename "$full_data_path")
