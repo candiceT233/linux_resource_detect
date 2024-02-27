@@ -27,7 +27,7 @@ fi
 
 # Main script
 
-echo "Current storage config file: $DEST_PATH"
+echo "Destination path: $DEST_PATH"
 echo "User data path list file: $USER_DATA_LIST"
 echo "LOG_LEVEL: $LOG_LEVEL"
 echo "DEST_FILES: $DEST_FILES"
@@ -38,35 +38,92 @@ else
 fi
 echo "-------------------------------------"
 
+check_data_moving_performance(){
+    local dest_file="$1"
+    local duration="$2"
+    # get dest_file size in bytes
+    local dest_file_size=$(stat -c%s "$dest_file")
+    # calculate bandwidth
+    local bandwidth=$(bc <<< "$dest_file_size / $duration")
+    echo "$bandwidth"
+}
+
+check_dir_moving_performance(){
+    local dest_file="$1"
+    local duration="$2"
+    # get dest_file size in bytes
+    # local dest_file_size=$(du -b "$dest_file/*")
+
+    local output=$(du -b $dest_file/*)
+
+    # Initialize an empty array
+    file_sizes=()
+
+    # Iterate over each line of the output and extract the first column
+    while IFS=$'\t' read -r size _; do
+        # Add the size to the array
+        file_sizes+=("$size")
+    done <<< "$output"
+
+    # # Print the array
+    # printf '%s\n' "${file_sizes[@]}"
+    sum_sizes=0
+    for size in "${file_sizes[@]}"; do
+        # convert string to integer
+        size=$(($size))
+        sum_sizes=$(($sum_sizes + $size))
+    done
+
+    # calculate bandwidth
+    local bandwidth=$(bc <<< "$sum_sizes / $duration")
+    echo "$bandwidth"
+}
 
 move_data_to_dest(){
     dest_path="$1"
     moved_data=0
     for full_data_path in "${user_file_list[@]}"; do
-        # get file base name
-        data_file=$(basename "$full_data_path")
-        full_dest_file="$dest_path/$data_file"
-
-        # check if full_dest_file already exist
-        if [[ "$full_data_path" == "$full_dest_file"* ]]; then
-            echo "Error: $full_data_path already exist in $dest_path"
-        else
-            [ $LOG_LEVEL -eq 1 ] && echo "Moving $full_data_path to $dest_path"
-            start_time=$(date +%s.%N)        
+        # if full_data_path is a directory
+        if [ -d "$full_data_path" ]; then
+            [ $LOG_LEVEL -eq 1 ] && echo "Moving directory $full_data_path to $dest_path"
+            start_time=$(date +%s.%N)     
+            # iteratively cp files in the directory
             cp -r "$full_data_path" "$dest_path"
             end_time=$(date +%s.%N)
             duration=$(echo "$end_time - $start_time" | bc)
-            let moved_data++
-
-            dest_data="$dest_path/$data_file"
+            let moved_dir++
             # store performance statistics
-            bw=$(check_data_moving_performance "$dest_data" "$duration")
+            bw=$(check_dir_moving_performance "$dest_data" "$duration")
             move_data_perf[$moved_data,"Dest"]=$dest_data
             move_data_perf[$moved_data,"Duration"]=$duration
             move_data_perf[$moved_data,"Bandwidth"]=$bw
+        else
 
-            [ $LOG_LEVEL -eq 1 ] && echo "Moved $full_data_path to $dest_path in $duration seconds"
-            [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $dest_data`"
+            # get file base name
+            data_file=$(basename "$full_data_path")
+            full_dest_file="$dest_path/$data_file"
+
+            # check if full_dest_file already exist
+            if [[ "$full_data_path" == "$full_dest_file"* ]]; then
+                echo "Error: $full_data_path already exist in $dest_path"
+            else
+                [ $LOG_LEVEL -eq 1 ] && echo "Moving file $full_data_path to $dest_path"
+                start_time=$(date +%s.%N)        
+                cp "$full_data_path" "$dest_path"
+                end_time=$(date +%s.%N)
+                duration=$(echo "$end_time - $start_time" | bc)
+                let moved_data++
+
+                dest_data="$dest_path/$data_file"
+                # store performance statistics
+                bw=$(check_data_moving_performance "$dest_data" "$duration")
+                move_data_perf[$moved_data,"Dest"]=$dest_data
+                move_data_perf[$moved_data,"Duration"]=$duration
+                move_data_perf[$moved_data,"Bandwidth"]=$bw
+
+                [ $LOG_LEVEL -eq 1 ] && echo "Moved $full_data_path to $dest_path in $duration seconds"
+                [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $dest_data`"
+            fi
         fi
     done
 }
@@ -75,24 +132,6 @@ move_data_to_dest "$DEST_PATH"
 
 
 # ---- Check if destination path has the user files
-"""
-check_dest_data(){
-    for full_data_path in "${user_file_list[@]}"; do
-        # get file base name
-        data_file=$(basename "$full_data_path")
-        full_dest_file="$dest_path/$data_file"
-
-        # check full_dest_file exits
-        if [ -f "$full_dest_file" ]; then
-            [ $LOG_LEVEL -eq 1 ] && echo "Successfully moved $full_dest_file"
-            [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $full_dest_file`"
-            echo "$full_dest_file" >> $DEST_FILES
-        else
-            echo "Error: $full_dest_file does not exist"
-        fi
-    done
-}
-"""
 
 check_dest_data(){
     for full_data_path in "${user_file_list[@]}"; do
