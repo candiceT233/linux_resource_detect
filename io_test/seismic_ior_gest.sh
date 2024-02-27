@@ -41,9 +41,9 @@ TEST_DIR="$1"
 DROP_CACHE_CMD="sudo /sbin/sysctl vm.drop_caches=3"
 
 # Print Usage
-if [ $# -ne 3 ]; then
-    echo "Usage: $0 <shared_path> <local_path> <drop_cache_cmd>"
-    echo "Example: $0 /mnt/nfs /mnt/nvme \"sudo echo 3 > /proc/sys/vm/drop_caches\""
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <io_test_dir> <drop_cache_cmd>"
+    echo "Example: $0 /mnt/nvme \"sudo echo 3 > /proc/sys/vm/drop_caches\""
     exit 1
 fi
 
