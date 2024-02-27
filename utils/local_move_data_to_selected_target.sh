@@ -237,6 +237,24 @@ display_dest_path (){
 
 [ $LOG_LEVEL -eq 1 ] && display_dest_path $key
 
+# ---- Display movement performance statistics
+moved_data=0
+display_movement_performance_stat(){
+    echo "-------------------------------------"
+    # check if there is any data moved
+    if [ $moved_data -eq 0 ]; then
+        echo "No data moved"
+        return
+    else
+        echo "Data movement performance statistics:"
+        for i in $(seq 1 $moved_data); do
+            echo "  - ${move_data_perf[$i,Dest]}: ${move_data_perf[$i,Duration]} seconds, ${move_data_perf[$i,Bandwidth]} B/s"
+        done
+    fi
+    echo "-------------------------------------"
+}
+
+
 
 # check to make sure user data is not already in the best_bw_item
 declare -A move_data_perf
@@ -252,7 +270,6 @@ check_data_moving_performance(){
 
 move_data_to_dest(){
     dest_path="$1"
-    moved_data=0
     for full_data_path in "${user_file_list[@]}"; do
         # get file base name
         data_file=$(basename "$full_data_path")
@@ -280,6 +297,8 @@ move_data_to_dest(){
             [ $LOG_LEVEL -eq 1 ] && echo "`ls -l $dest_data`"
         fi
     done
+
+    [ $LOG_LEVEL -eq 1 ] && display_movement_performance_stat
 }
 
 dest_path="${best_bw_item[Actual_Path]}"
@@ -344,23 +363,7 @@ check_dest_data(){
 
 check_dest_data
 
-# ---- Display movement performance statistics
-display_movement_performance_stat(){
-    echo "-------------------------------------"
-    # check if there is any data moved
-    if [ $moved_data -eq 0 ]; then
-        echo "No data moved"
-        return
-    else
-        echo "Data movement performance statistics:"
-        for i in $(seq 1 $moved_data); do
-            echo "  - ${move_data_perf[$i,Dest]}: ${move_data_perf[$i,Duration]} seconds, ${move_data_perf[$i,Bandwidth]} B/s"
-        done
-    fi
-    echo "-------------------------------------"
-}
 
-[ $LOG_LEVEL -eq 1 ] && display_movement_performance_stat
 
 
 # restore data to original path
