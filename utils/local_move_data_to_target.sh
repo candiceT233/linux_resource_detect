@@ -38,6 +38,48 @@ else
 fi
 echo "-------------------------------------"
 
+# ---- Parsing the user data list file and check the file size
+user_file_list=()
+"""
+while IFS=, read -r file_path
+do
+    # Evaluate the file path to resolve environment variables
+    eval "resolved_path=$file_path"
+
+    # if file exist, echo
+    if [ -f "$resolved_path" ]; then
+        user_file_list+=("$resolved_path")
+    else
+        echo "Error: $resolved_path does not exist, not added."
+        continue
+    fi
+done < "$USER_DATA_LIST"
+"""
+
+while IFS=, read -r file_path
+do
+    # Evaluate the file path to resolve environment variables
+    eval "resolved_path=$file_path"
+    # Check if the path exists
+    if [ ! -e "$resolved_path" ]; then
+        echo "Error: $resolved_path does not exist, not added."
+        continue
+    fi
+
+
+    # Check if the path is a file
+    if [ -f "$resolved_path" ]; then
+        echo "INFO: $resolved_path is a file"
+        user_file_list+=("$resolved_path")
+    elif [ -d "$resolved_path" ]; then
+        echo "INFO: $resolved_path is a directory"
+    	user_file_list+=("$resolved_path")
+    else
+        echo "Error: $resolved_path is neither a file nor a directory, not added."
+        continue
+    fi
+done < "$USER_DATA_LIST"
+
 check_data_moving_performance(){
     local dest_file="$1"
     local duration="$2"
