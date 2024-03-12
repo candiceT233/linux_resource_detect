@@ -15,6 +15,10 @@ EGF_INPUT_PATH=$EXP_DATA_PATH/EGF
 
 mkdir -p $EXP_DATA_PATH
 
+# cleanup data
+rm -rf $$EXP_DATA_PATH/*.stf
+rm -rf $$EXP_DATA_PATH/*good-fit*
+
 # record start time in milliseconds
 time_1=$(($(date +%s%N)/1000000))
 echo "Start sG1IterDcon --------------------------------"
