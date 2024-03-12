@@ -47,7 +47,7 @@ for t in {1..20}; do
     input_prefix=${all_input_prefix[$t-1]}\
     echo "Moving output to ${input_prefix}.lht_iter_g1.stf"
     cd run$t
-    mv _iter_g1.stf ${input_prefix}.lht_iter_g1.stf
+    mv _iter_g1.stf cd $EXP_DATA_PATH/${input_prefix}.lht_iter_g1.stf
     cd $EXP_DATA_PATH
 done
 
@@ -57,26 +57,26 @@ time_2=$(($(date +%s%N)/1000000))
 echo "Start siftSTFByMisfit.py --------------------------------"
 
 python $IterDecon_BIN/siftSTFByMisfit.py \
-    $EXP_DATA_PATH/run*/b916-pb-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/g43a-ta-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/d27-xt-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/nc05-xq-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/q43a-ta-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/ss64-xi-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/enh-ic-00_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/ss72-xi-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/maja-xv-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/n02d-ta-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/i55a-ta-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/149a-ta-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/bar-ci-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/dac-lb-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/d34-xt-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/pats-ps-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/tato-iu-10_ldsp.lht_iter_g1.stf \ 
-    $EXP_DATA_PATH/run*/gugu-xf-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/b026-pb-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/run*/frb-cn-_ldsp.lht_iter_g1.stf
+    $EXP_DATA_PATH/b916-pb-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/g43a-ta-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/d27-xt-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/nc05-xq-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/q43a-ta-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/ss64-xi-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/enh-ic-00_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/ss72-xi-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/maja-xv-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/n02d-ta-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/i55a-ta-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/149a-ta-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/bar-ci-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/dac-lb-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/d34-xt-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/pats-ps-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/tato-iu-10_ldsp.lht_iter_g1.stf \ 
+    $EXP_DATA_PATH/gugu-xf-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/b026-pb-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/frb-cn-_ldsp.lht_iter_g1.stf
 
 time_3=$(($(date +%s%N)/1000000))
 
