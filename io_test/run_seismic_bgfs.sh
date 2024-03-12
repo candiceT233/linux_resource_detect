@@ -73,8 +73,7 @@ python $IterDecon_BIN/siftSTFByMisfit.py \
     $EXP_DATA_PATH/dac-lb-_ldsp.lht_iter_g1.stf \
     $EXP_DATA_PATH/d34-xt-_ldsp.lht_iter_g1.stf \
     $EXP_DATA_PATH/pats-ps-_ldsp.lht_iter_g1.stf \
-    $EXP_DATA_PATH/tato-iu-10_ldsp.lht_iter_g1.stf \ 
-    $EXP_DATA_PATH/gugu-xf-_ldsp.lht_iter_g1.stf \
+    $EXP_DATA_PATH/tato-iu-10_ldsp.lht_iter_g1.stf $EXP_DATA_PATH/gugu-xf-_ldsp.lht_iter_g1.stf \
     $EXP_DATA_PATH/b026-pb-_ldsp.lht_iter_g1.stf \
     $EXP_DATA_PATH/frb-cn-_ldsp.lht_iter_g1.stf
 
