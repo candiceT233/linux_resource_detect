@@ -48,7 +48,7 @@ for t in {1..20}; do
     input_prefix=${all_input_prefix[$t-1]}\
     echo "Moving output to ${input_prefix}.lht_iter_g1.stf"
     cd run$t
-    mv _iter_g1.stf cd $EXP_DATA_PATH/${input_prefix}.lht_iter_g1.stf
+    mv _iter_g1.stf $EXP_DATA_PATH/${input_prefix}.lht_iter_g1.stf
     cd $EXP_DATA_PATH
 done
 
