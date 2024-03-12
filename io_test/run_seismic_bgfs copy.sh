@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 CONCURRENCY=$1 # test 5 10 20
 
 # Check user input
@@ -9,11 +10,13 @@ if [ -z "$CONCURRENCY" ]; then
 fi
 
 IterDecon_BIN=///qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/bin
-EXP_DATA_PATH=///scratch/$USER/seismic_data # Local SSD
+EXP_DATA_PATH=/rcfs/projects/chess/$USER/seismic_data # BeeGFS
 MSHOCK_DATA_PATH=$EXP_DATA_PATH/MShock
 EGF_INPUT_PATH=$EXP_DATA_PATH/EGF
 
 mkdir -p $EXP_DATA_PATH
+
+cd $EXP_DATA_PATH
 
 # record start time in milliseconds
 time_1=$(($(date +%s%N)/1000000))
