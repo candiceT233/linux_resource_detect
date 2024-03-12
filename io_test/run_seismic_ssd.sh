@@ -53,7 +53,7 @@ time_2=$(($(date +%s%N)/1000000))
 
 echo "Start siftSTFByMisfit.py --------------------------------"
 
-python $IterDecon_BIN/sG1IterDecon/siftSTFByMisfit.py \
+python $IterDecon_BIN/siftSTFByMisfit.py \
     $EXP_DATA_PATH/run*/b916-pb-_ldsp.lht_iter_g1.stf \
     $EXP_DATA_PATH/run*/g43a-ta-_ldsp.lht_iter_g1.stf \
     $EXP_DATA_PATH/run*/d27-xt-_ldsp.lht_iter_g1.stf \
