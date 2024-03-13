@@ -66,16 +66,16 @@ RUN_IOR (){
         for tsize in 1k 64 1k 2k 4k; do
             echo "Testing $tsize"
 
-            for trial in 1; do #2 3; do # {1..3}
-                echo "Trial $trial"
-                test_name="ior_${tsize}_${trial}"
+            for tasks in 1 5 10 20; do #2 3; do # {1..3}
+                echo "Number of Tasks: $tasks"
+                test_name="ior_${tsize}_n${tasks}"
 
                 test_file="$FS/${test_name}.bin"
                 
                 rm $test_file 2> /dev/null
                 `$DROP_CACHE_CMD`
-		
-		ior -a POSIX -w -r -t $tsize -s 10 -F -k -i 3 -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
+                
+                mpirun -n $tasks ior -a POSIX -w -r -t $tsize -s 10 -F -k -i 3 -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
 
                 rm -rf $actual_test_file 2> /dev/null
                 `$DROP_CACHE_CMD`
