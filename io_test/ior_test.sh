@@ -38,7 +38,8 @@ COMMENT
 
 SHARED_PATH="$1"
 LOCAL_PATH="$2"
-DROP_CACHE_CMD="$3"
+#DROP_CACHE_CMD="$3"
+DROP_CACHE_CMD="sudo /sbin/sysctl vm.drop_caches=3"
 
 # Print Usage
 if [ $# -ne 3 ]; then
@@ -67,7 +68,7 @@ RUN_IOR (){
         FS="$FS/iortest" # add iortest folder to path
         echo "Testing $FS"
         mkdir -p $FS
-        for tsize in 2m 4k; do
+        for tsize in 1k; #64 2k 4k; do
             echo "Testing $tsize"
 
             for trial in 1; do # {1..3}
@@ -79,13 +80,13 @@ RUN_IOR (){
                 `$DROP_CACHE_CMD`
 
                 echo "Writing File:"
-                ior -a POSIX -w -t $tsize -b 1g -s 10 -e -F -k -e -useO_DIRECT -o $test_file
+                ior -a POSIX -w -t $tsize -s 10 -e -F -k -e -useO_DIRECT -o $test_file
 
                 `$DROP_CACHE_CMD`
                 sleep 5
 
                 echo "Reading File:"
-                ior -a POSIX -r -t $tsize -b 1g -s 10 -e -F -E -k -e -useO_DIRECT -o $test_file
+                ior -a POSIX -r -t $tsize -s 10 -e -F -E -k -e -useO_DIRECT -o $test_file
 
                 `$DROP_CACHE_CMD`
                 sleep 5
