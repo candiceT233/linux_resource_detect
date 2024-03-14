@@ -76,10 +76,11 @@ echo "Start siftSTFByMisfit.py --------------------------------"
 
 # Get all .stf files in the directory #EXP_DATA_PATH into a string
 file_str=$(ls $EXP_DATA_PATH | grep ".stf" | tr '\n' ' ')
-echo "Files: $file_str"
+# echo "Files: $file_str"
 
+set -x
 python $IterDecon_BIN/siftSTFByMisfit.py $file_str
-
+set +x
 
 time_3=$(($(date +%s%N)/1000000))
 
