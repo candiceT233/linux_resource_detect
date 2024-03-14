@@ -46,8 +46,9 @@ for ((i = 0; i < num_files; i++)); do
     
     cd $EXP_DATA_PATH
 
+    task_num=$(($i + 1))
     # check if wait is needed
-    wait_for_jobs=$(($t % $CONCURRENCY))
+    wait_for_jobs=$(($task_num % $CONCURRENCY))
     if [ $wait_for_jobs -eq 0 ]; then
         echo "Waiting for job ${t} to finish"
         wait
