@@ -32,7 +32,7 @@ readarray -t all_input_prefix < <(head -n $INPUT_FILE_NUM all_seismic_input.txt)
 
 num_files="${#all_input_prefix[@]}"
 
-for t in {1..20}; do
+for t in {1..${num_files}}; do
     input_prefix=${all_input_prefix[$t-1]}
 
     echo "Running input ${input_prefix}"
