@@ -33,6 +33,9 @@ echo "Start sG1IterDcon --------------------------------"
 
 num_files="${#all_input_prefix[@]}"
 
+for ((i = 0; i < num_files; i++)); do
+    echo "Element at index $i: ${all_input_prefix[i]}"
+done
 
 # for t in {1..$}; do
 # for input_prefix in ${all_input_prefix[@]}; do
