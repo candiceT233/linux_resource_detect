@@ -35,8 +35,9 @@ num_files="${#all_input_prefix[@]}"
 
 
 # for t in {1..$}; do
-for input_prefix in ${all_input_prefix[@]}; do
-    # input_prefix=${all_input_prefix[$t-1]}
+# for input_prefix in ${all_input_prefix[@]}; do
+for ((i = 0; i < ${#array_name[@]}; i++)); do
+    input_prefix=${all_input_prefix[i]}
     mkdir run_$input_prefix
     cd run_$input_prefix
 
@@ -54,8 +55,8 @@ for input_prefix in ${all_input_prefix[@]}; do
 done
 
 # Moving data
-for input_prefix in ${all_input_prefix[@]}; do
-    # input_prefix=${all_input_prefix[$t-1]}
+for ((i = 0; i < ${#array_name[@]}; i++)); do
+    input_prefix=${all_input_prefix[i]}
     mkdir run_$input_prefix
     cd run_$input_prefix
 
