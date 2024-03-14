@@ -34,12 +34,13 @@ echo "Start sG1IterDcon --------------------------------"
 num_files="${#all_input_prefix[@]}"
 
 
-for t in {1..${num_files}}; do
-    input_prefix=${all_input_prefix[$t-1]}
+# for t in {1..$}; do
+for input_prefix in ${all_input_prefix[@]}; do
+    # input_prefix=${all_input_prefix[$t-1]}
+    mkdir run_$input_prefix
+    cd run_$input_prefix
 
     echo "Running input ${input_prefix}"
-    mkdir run$t
-    cd run$t
     sh $IterDecon_BIN/sG1IterDecon $MSHOCK_DATA_PATH/${input_prefix}.lht $EGF_INPUT_PATH/${input_prefix}.lht &
     
     cd $EXP_DATA_PATH
@@ -53,12 +54,16 @@ for t in {1..${num_files}}; do
 done
 
 # Moving data
-for t in {1..20}; do
+for input_prefix in ${all_input_prefix[@]}; do
+    # input_prefix=${all_input_prefix[$t-1]}
+    mkdir run_$input_prefix
+    cd run_$input_prefix
+
     input_prefix=${all_input_prefix[$t-1]}\
     echo "Moving output to ${input_prefix}.lht_iter_g1.stf"
-    cd run$t
     mv _iter_g1.stf $EXP_DATA_PATH/${input_prefix}.lht_iter_g1.stf
     cd $EXP_DATA_PATH
+    rm -rf run_$input_prefix
 done
 
 
