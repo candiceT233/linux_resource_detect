@@ -13,6 +13,10 @@ if [ -z "$CONCURRENCY" ]; then
     echo "Usage: $0 <concurrency> <input_file_num>"
     exit 1
 fi
+readarray -t all_input_prefix < <(head -n $INPUT_FILE_NUM all_seismic_input.txt)
+# echo ${all_input_prefix[@]}
+# all_input_prefix=( "b916-pb-_ldsp" "g43a-ta-_ldsp" "d27-xt-_ldsp" "nc05-xq-_ldsp" "q43a-ta-_ldsp" "ss64-xi-_ldsp" "enh-ic-00_ldsp" "ss72-xi-_ldsp" "maja-xv-_ldsp" "n02d-ta-_ldsp" "i55a-ta-_ldsp" "149a-ta-_ldsp" "bar-ci-_ldsp" "dac-lb-_ldsp" "d34-xt-_ldsp" "pats-ps-_ldsp" "tato-iu-10_ldsp" "gugu-xf-_ldsp" "b026-pb-_ldsp" "frb-cn-_ldsp")
+
 
 mkdir -p $EXP_DATA_PATH
 cd $EXP_DATA_PATH
@@ -25,14 +29,11 @@ rm -rf $EXP_DATA_PATH/*good-fit*
 time_1=$(($(date +%s%N)/1000000))
 echo "Start sG1IterDcon --------------------------------"
 
-readarray -t all_input_prefix < <(head -n $INPUT_FILE_NUM all_seismic_input.txt)
-# echo ${all_input_prefix[@]}
-
-# all_input_prefix=( "b916-pb-_ldsp" "g43a-ta-_ldsp" "d27-xt-_ldsp" "nc05-xq-_ldsp" "q43a-ta-_ldsp" "ss64-xi-_ldsp" "enh-ic-00_ldsp" "ss72-xi-_ldsp" "maja-xv-_ldsp" "n02d-ta-_ldsp" "i55a-ta-_ldsp" "149a-ta-_ldsp" "bar-ci-_ldsp" "dac-lb-_ldsp" "d34-xt-_ldsp" "pats-ps-_ldsp" "tato-iu-10_ldsp" "gugu-xf-_ldsp" "b026-pb-_ldsp" "frb-cn-_ldsp")
 
 num_files="${#all_input_prefix[@]}"
 
-for t in {1..20}; do
+
+for t in {1..${num_files}}; do
     input_prefix=${all_input_prefix[$t-1]}
 
     echo "Running input ${input_prefix}"
