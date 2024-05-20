@@ -14,12 +14,20 @@ if [ -z "$CONCURRENCY" ]; then
     exit 1
 fi
 readarray -t all_input_file < <(head -n $INPUT_FILE_NUM all_seismic_input.txt)
-# echo ${all_input_file[@]}
+echo "Input files: ${all_input_file[@]}"
 # all_input_file=( "b916-pb-_ldsp" "g43a-ta-_ldsp" "d27-xt-_ldsp" "nc05-xq-_ldsp" "q43a-ta-_ldsp" "ss64-xi-_ldsp" "enh-ic-00_ldsp" "ss72-xi-_ldsp" "maja-xv-_ldsp" "n02d-ta-_ldsp" "i55a-ta-_ldsp" "149a-ta-_ldsp" "bar-ci-_ldsp" "dac-lb-_ldsp" "d34-xt-_ldsp" "pats-ps-_ldsp" "tato-iu-10_ldsp" "gugu-xf-_ldsp" "b026-pb-_ldsp" "frb-cn-_ldsp")
 
 
+PREPARE_INPUT_PATH(){
+    echo "Copying input files to $EXP_DATA_PATH"
+    cp -r /qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/input/* $EXP_DATA_PATH/
+    # Check if folders are copied
+    ls -l $EXP_DATA_PATH
+}
+
 mkdir -p $EXP_DATA_PATH
 cd $EXP_DATA_PATH
+# PREPARE_INPUT_PATH
 
 # cleanup data
 rm -rf $EXP_DATA_PATH/*.stf
@@ -41,6 +49,7 @@ for ((i = 0; i < num_files; i++)); do
     cd run_$input_file
 
     echo "Running input ${input_file}"
+
     sh $IterDecon_BIN/sG1IterDecon $MSHOCK_DATA_PATH/${input_file} $EGF_INPUT_PATH/${input_file} &
     
     cd $EXP_DATA_PATH
@@ -68,6 +77,7 @@ for ((i = 0; i < num_files; i++)); do
     rm -rf run_$input_file
 done
 
+sudo /sbin/sysctl vm.drop_caches=3
 
 time_2=$(($(date +%s%N)/1000000))
 

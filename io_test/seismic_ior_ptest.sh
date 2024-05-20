@@ -66,20 +66,22 @@ RUN_IOR (){
         for tsize in 64 1k 2k 4k; do
             echo "Testing $tsize"
 
-            for ntask in 1 5 10 20; do
+            for ntask in 80 160 320; do #40 80 160 320; do #1 5 10 20; do #2 3; do # {1..3}
 
-                echo "Trial $trial"
+                # echo "Trial $trial"
                 test_name="ior_${tsize}_n${ntask}"
 
                 test_file="$FS/${test_name}.bin"
                 
                 rm $test_file 2> /dev/null
-                `$DROP_CACHE_CMD`
+                # `$DROP_CACHE_CMD`
+                sudo /sbin/sysctl vm.drop_caches=3
 
                 echo "Write Read File:"
-                mpirun -n $ntask ior -a POSIX -useO_DIRECT -w -r -i 3 -t $tsize -s 4 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
+                mpirun -n $ntask --oversubscribe ior -a POSIX -useO_DIRECT -w -r -i 3 -t $tsize -s 4 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
 
-                `$DROP_CACHE_CMD`
+                # `$DROP_CACHE_CMD`
+                sudo /sbin/sysctl vm.drop_caches=3
                 sleep 5
 
                 # echo "Measure data staging time -----------------"

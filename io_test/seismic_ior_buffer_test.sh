@@ -37,7 +37,7 @@ COMMENT
 
 
 TEST_DIR="$1"
-#DROP_CACHE_CMD="$3"
+# DROP_CACHE_CMD="$2"
 DROP_CACHE_CMD="sudo /sbin/sysctl vm.drop_caches=3"
 
 # Print Usage
@@ -66,7 +66,7 @@ RUN_IOR (){
         for tsize in 1k 64 1k 2k 4k; do
             echo "Testing $tsize"
 
-            for tasks in 1 5 10 20 40 80 160 320; do #1 5 10 20; do #2 3; do # {1..3}
+            for tasks in 1 5 10 20; do #40 80 160 320; do #1 5 10 20; do #2 3; do # {1..3}
                 echo "Number of Tasks: $tasks"
                 test_name="ior_${tsize}_n${tasks}"
 
