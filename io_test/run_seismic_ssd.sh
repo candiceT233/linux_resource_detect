@@ -41,8 +41,8 @@ for ((i = 0; i < num_files; i++)); do
     cd run_$input_file
 
     echo "Running input ${input_file}"
-    sh $IterDecon_BIN/sG1IterDecon $MSHOCK_DATA_PATH/${input_file} $EGF_INPUT_PATH/${input_file} &
-    
+    LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so \
+        bash $IterDecon_BIN/sG1IterDecon $MSHOCK_DATA_PATH/${input_file} $EGF_INPUT_PATH/${input_file} &
     cd $EXP_DATA_PATH
 
     task_num=$(($i + 1))
@@ -74,11 +74,12 @@ time_2=$(($(date +%s%N)/1000000))
 echo "Start siftSTFByMisfit.py --------------------------------"
 
 # Get all .stf files in the directory #EXP_DATA_PATH into a string
-file_str=$(ls $EXP_DATA_PATH | grep ".stf" | tr '\n' ' ')
+file_str=$(realpath $EXP_DATA_PATH/* | grep ".stf" | tr '\n' ' ')
 # echo "Files: $file_str"
 
 set -x
-python $IterDecon_BIN/siftSTFByMisfit.py $file_str
+LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so \
+    python3 $IterDecon_BIN/siftSTFByMisfit.py $file_str
 set +x
 
 time_3=$(($(date +%s%N)/1000000))
@@ -91,5 +92,6 @@ echo "End --------------------------------"
 
 # Check if the output files are generated
 set -x
-ls -l $EXP_DATA_PATH | grep ".stf" | wc -l
+# ls -l $EXP_DATA_PATH | grep ".stf" | wc -l
 ls -l $EXP_DATA_PATH | grep "good-fit" | wc -l
+du -k $EXP_DATA_PATH/*.stf

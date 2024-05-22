@@ -42,10 +42,11 @@ num_files="${#all_input_file[@]}"
 
 # Darshan Environment Variables
 export DARSHAN_ENABLE_NONMPI=1
+export DARSHAN_MOD_ENABLE="DXT_POSIX" #DXT_MPIIO
 # export LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so io-test
 # export DARSHAN_LOGHINTS="romio_no_indep_rw=true;cb_nodes=1"
 # export DXT_ENABLE_IO_TRACE=1
-export DARSHAN_MOD_ENABLE="DXT_POSIX" #DXT_MPIIO
+
 
 
 # for t in {1..$}; do
@@ -92,11 +93,13 @@ time_2=$(($(date +%s%N)/1000000))
 echo "Start siftSTFByMisfit.py --------------------------------"
 
 # Get all .stf files in the directory #EXP_DATA_PATH into a string
-file_str=$(ls $EXP_DATA_PATH | grep ".stf" | tr '\n' ' ')
+file_str=$(realpath $EXP_DATA_PATH/* | grep ".stf" | tr '\n' ' ')
 # echo "Files: $file_str"
 
 set -x
-python $IterDecon_BIN/siftSTFByMisfit.py $file_str
+
+LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so \
+    python3 $IterDecon_BIN/siftSTFByMisfit.py $file_str
 set +x
 
 time_3=$(($(date +%s%N)/1000000))
@@ -112,5 +115,7 @@ hostname
 
 # Check if the output files are generated
 set -x
-ls -l $EXP_DATA_PATH | grep ".stf" | wc -l
+# ls -l $EXP_DATA_PATH | grep ".stf" | wc -l
 ls -l $EXP_DATA_PATH | grep "good-fit" | wc -l
+du -k $EXP_DATA_PATH/*.stf
+
