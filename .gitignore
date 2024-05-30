@@ -1,4 +1,6 @@
 example_workflow/
 test_log/
 io_test/
+!*.py
+!*.sh
 *.csv
