@@ -32,6 +32,12 @@ echo "Start sG1IterDcon --------------------------------"
 
 num_files="${#all_input_file[@]}"
 
+# Darshan Environment Variables
+export DARSHAN_ENABLE_NONMPI=1
+export DARSHAN_MOD_ENABLE="DXT_POSIX" #DXT_MPIIO
+# export LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so io-test
+# export DARSHAN_LOGHINTS="romio_no_indep_rw=true;cb_nodes=1"
+# export DXT_ENABLE_IO_TRACE=1
 
 # for t in {1..$}; do
 # for input_file in ${all_input_file[@]}; do

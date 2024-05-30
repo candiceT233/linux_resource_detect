@@ -63,44 +63,24 @@ RUN_IOR (){
         FS="$FS/iortest" # add iortest folder to path
         echo "Testing $FS"
         mkdir -p $FS
-        for tsize in 64 2k 4k 8k
-        do
+        for tsize in 64 1k 2k 4k; do
             echo "Testing $tsize"
 
-            for ntask in 1 2 5 10 20 40 80 160 320 80 160 320 #40 80 160 320; do #1 5 10 20; do #2 3; do # {1..3}
-            do 
+            test_name="ior_${tsize}"
 
-                # echo "Trial $trial"
-                test_name="ior_${tsize}_n${ntask}"
+            test_file="$FS/${test_name}.bin"
+            
+            rm $test_file 2> /dev/null
+            `$DROP_CACHE_CMD`
 
-                test_file="$FS/${test_name}.bin"
-                
-                rm $test_file 2> /dev/null
-                # `$DROP_CACHE_CMD`
-                sudo /sbin/sysctl vm.drop_caches=3
+            echo "Write Read File: ${test_file}"
+            mpirun -n 1 ior -a POSIX -useO_DIRECT -w -r -i 3 -t $tsize -s 10 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
 
-                echo "Write Read File:"
-                mpirun -n $ntask --oversubscribe ior -a POSIX -useO_DIRECT -w -r -i 3 -t $tsize -s 4 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
+            #actual_test_file="$FS/0/ior_${tsize}_${trial}.bin.*"
+            #rm -rf $actual_test_file 2> /dev/null
+            #`$DROP_CACHE_CMD`
+            sleep 5
 
-                # `$DROP_CACHE_CMD`
-                sudo /sbin/sysctl vm.drop_caches=3
-                sleep 5
-
-                # echo "Measure data staging time -----------------"
-                # # actual_test_file=$(find $FS -name "ior_${tsize}_${trial}.bin")
-                # actual_test_file="$FS/0/ior_${tsize}_${trial}.bin.00000000"
-                # # Check if file exists
-                # if [ ! -f "$actual_test_file" ]; then
-                #     echo "File $actual_test_file does not exist"
-                #     exit 1
-                # fi
-                # echo "Actual test file: $actual_test_file"
-
-                # rm -rf $actual_test_file 2> /dev/null
-                # `$DROP_CACHE_CMD`
-                # sleep 5
-
-            done 
         done
         echo ""
         echo "$FS tests done -----------------"
@@ -110,3 +90,4 @@ RUN_IOR (){
 
 
 RUN_IOR | tee $LOG_FILE
+

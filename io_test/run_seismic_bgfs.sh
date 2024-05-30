@@ -42,10 +42,10 @@ num_files="${#all_input_file[@]}"
 
 # Darshan Environment Variables
 export DARSHAN_ENABLE_NONMPI=1
-export DARSHAN_MOD_ENABLE="DXT_POSIX" #DXT_MPIIO
+export DARSHAN_MOD_ENABLE="DXT_POSIX"
 # export LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so io-test
 # export DARSHAN_LOGHINTS="romio_no_indep_rw=true;cb_nodes=1"
-# export DXT_ENABLE_IO_TRACE=1
+export DXT_ENABLE_IO_TRACE=1
 
 
 
@@ -59,7 +59,7 @@ for ((i = 0; i < num_files; i++)); do
     echo "Running input ${input_file}"
 
     LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so \
-        bash $IterDecon_BIN/sG1IterDecon $MSHOCK_DATA_PATH/${input_file} $EGF_INPUT_PATH/${input_file} &
+        sh $IterDecon_BIN/sG1IterDecon $MSHOCK_DATA_PATH/${input_file} $EGF_INPUT_PATH/${input_file} &
     
     cd $EXP_DATA_PATH
 

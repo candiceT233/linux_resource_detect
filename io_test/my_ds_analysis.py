@@ -124,12 +124,14 @@ def get_bw(file_io_stat):
             end_time_sec = float(file_io_stat[file_name]["End(s)"])
             io_time_sec = end_time_sec - start_time_sec
             io_size = int(io_stat['Length']) / 1024
-            bandwidth = io_size / io_time_sec
             all_io_size_kb += io_size
             all_io_time_sec += io_time_sec
-            print(f"File: {file_name}, Size: {io_size} KB, Time: {io_time_sec:.2f} sec, Bandwidth: {bandwidth:.2f} KB/s")
+            # print(f"File: {file_name}, Size: {io_size} KB, Time: {io_time_sec:.4f} sec, Bandwidth: {bandwidth:.4f} KB/s")
     # Convert to MB/s
-    all_bw_mb = all_io_size_kb / all_io_time_sec / 1024
+    if all_io_time_sec == 0:
+        all_bw_mb = 0
+    else:
+        all_bw_mb = all_io_size_kb / all_io_time_sec / 1024
     return all_bw_mb
 
 def get_read_write_count(file_io_stat):
@@ -212,17 +214,17 @@ def get_t2_average_bw(log_folder_base):
         all_trial_read_count.append(log_io_stat['read_count'])
         all_trial_write_count.append(log_io_stat['write_count'])
         all_trial_io_size_kb.append(log_io_stat['io_size_kb'])
-        # print(f"Trial [{log_folder}] Bandwidth: {trial_bw_mb:.2f} MB/s Read Count: {trial_op_read} Write Count: {trial_op_write}")
+        # print(f"Trial [{log_folder}] Bandwidth: {trial_bw_mb:.4f} MB/s Read Count: {trial_op_read} Write Count: {trial_op_write}")
         print("-------------------------------------------------")
     
-    print(f"Trial Ave Bandwidth: {sum(all_trial_bw_mb)/len(all_trial_bw_mb):.2f} MB/s")
-    print(f"Trial Ave Read Count: {sum(all_trial_read_count)/len(all_trial_read_count)}")
-    print(f"Trial Ave Write Count: {sum(all_trial_write_count)/len(all_trial_write_count)}")
-    print(f"Trial Ave IO Size: {sum(all_trial_io_size_kb)/len(all_trial_io_size_kb):.2f} KB")
+    print(f"T2 Trial Ave Bandwidth: {sum(all_trial_bw_mb)/len(all_trial_bw_mb):.4f} MB/s")
+    print(f"T2 Trial Ave Read Count: {sum(all_trial_read_count)/len(all_trial_read_count)}")
+    print(f"T2 Trial Ave Write Count: {sum(all_trial_write_count)/len(all_trial_write_count)}")
+    print(f"T2 Trial Ave IO Size: {sum(all_trial_io_size_kb)/len(all_trial_io_size_kb):.4f} KB")
     if sum(all_trial_read_count) != 0:
-        print(f"Trial Ave Read Size: {sum(all_trial_io_size_kb)/sum(all_trial_read_count):.2f} KB")
+        print(f"T2 Trial Ave Read Size: {sum(all_trial_io_size_kb)/sum(all_trial_read_count):.4f} KB")
     if sum(all_trial_write_count) != 0:
-        print(f"Trial Ave Write Size: {sum(all_trial_io_size_kb)/sum(all_trial_write_count):.2f} KB")
+        print(f"T2 Trial Ave Write Size: {sum(all_trial_io_size_kb)/sum(all_trial_write_count):.4f} KB")
 
 
 def gen_t1_pdf_summary(log_folder_base):
@@ -319,9 +321,10 @@ def gen_t1_json_summary(log_folder_base):
         # print("-------------------------------------------------")
 
         json_metadata = json_stat['metadata']['job']
-        start_time_nsec = json_metadata['start_time_nsec']
-        end_time_nsec = json_metadata['end_time_nsec']
-        duration_sec = abs((end_time_nsec - start_time_nsec) / 1e9)
+        # start_time_nsec = json_metadata['start_time_nsec']
+        # end_time_nsec = json_metadata['end_time_nsec']
+        # duration_sec = abs((end_time_nsec - start_time_nsec) / 1e9) # convert to seconds
+        duration_sec = json_metadata['run_time']
 
 
         json_records = json_stat['records']
@@ -362,43 +365,49 @@ def gen_t1_json_summary(log_folder_base):
                                    'stdio_open': stdio_open, 'read_ave_kb': read_ave_kb, 'write_ave_kb': write_ave_kb,
                                    'dureation_sec': duration_sec, 'read_bw_mb': read_bw_mb, 'write_bw_mb': write_bw_mb}
 
+    all_read_cnt = []
+    all_write_cnt = []
+    all_read_size_byte = []
+    all_write_size_byte = []
+    all_stdio_open = []
+    all_read_ave_kb = []
+    all_write_ave_kb = []
+    all_duration_sec = []
+    all_read_bw_mb = []
+    all_write_bw_mb = []
+
+
     for trial, io_stat in trials_io_stat.items():
         print(f"Trial: {trial}, IO Stat: {io_stat}")
+        all_read_cnt.append(io_stat['read_cnt'])
+        all_write_cnt.append(io_stat['write_cnt'])
+        all_read_size_byte.append(io_stat['read_size_byte'])
+        all_write_size_byte.append(io_stat['write_size_byte'])
+        all_stdio_open.append(io_stat['stdio_open'])
+        all_read_ave_kb.append(io_stat['read_ave_kb'])
+        all_write_ave_kb.append(io_stat['write_ave_kb'])
+        all_duration_sec.append(io_stat['dureation_sec'])
+        all_read_bw_mb.append(io_stat['read_bw_mb'])
+        all_write_bw_mb.append(io_stat['write_bw_mb'])
     print()
 
-    # Calculate trial averages
-    ave_read_cnt = sum([io_stat['read_cnt'] for trial, io_stat in trials_io_stat.items()]) / len(trials_io_stat)
-    ave_write_cnt = sum([io_stat['write_cnt'] for trial, io_stat in trials_io_stat.items()]) / len(trials_io_stat)
-    ave_read_size_byte = sum([io_stat['read_size_byte'] for trial, io_stat in trials_io_stat.items()]) / len(trials_io_stat)
-    ave_write_size_byte = sum([io_stat['write_size_byte'] for trial, io_stat in trials_io_stat.items()]) / len(trials_io_stat)
-    ave_stdio_open = sum([io_stat['stdio_open'] for trial, io_stat in trials_io_stat.items()]) / len(trials_io_stat)
-    ave_read_ave_kb = sum([io_stat['read_ave_kb'] for trial, io_stat in trials_io_stat.items()]) / len(trials_io_stat)
-    ave_write_ave_kb = sum([io_stat['write_ave_kb'] for trial, io_stat in trials_io_stat.items()]) / len(trials_io_stat)
-    ave_duration_sec = sum([io_stat['dureation_sec'] for trial, io_stat in trials_io_stat.items()]) / len(trials_io_stat)
-    ave_read_bw_mb = sum([io_stat['read_bw_mb'] for trial, io_stat in trials_io_stat.items()]) / len(trials_io_stat)
-    ave_write_bw_mb = sum([io_stat['write_bw_mb'] for trial, io_stat in trials_io_stat.items()]) / len(trials_io_stat)
-
     # caculate stadard deviation
-    all_read_bw_list = [io_stat['read_bw_mb'] for trial, io_stat in trials_io_stat.items()]
-    ave_read_bw_stdev = statistics.pstdev(all_read_bw_list)
-    all_write_bw_list = [io_stat['write_bw_mb'] for trial, io_stat in trials_io_stat.items()]
-    ave_write_bw_stdev = statistics.pstdev(all_write_bw_list)
+    ave_read_bw_stdev = statistics.pstdev(all_read_bw_mb)
+    ave_write_bw_stdev = statistics.pstdev(all_write_bw_mb)
 
     # Print trial averages
-    print(f"Ave Read Count: {ave_read_cnt}")
-    print(f"Ave Write Count: {ave_write_cnt}")
-    print(f"Ave Read Size: {ave_read_size_byte/1024:.2f} KB")
-    print(f"Ave Write Size: {ave_write_size_byte/1024:.2f} KB")
-    print(f"Ave STDIO Open: {ave_stdio_open}")
-    print(f"Ave Read Ave Size: {ave_read_ave_kb:.2f} KB")
-    print(f"Ave Write Ave Size: {ave_write_ave_kb:.2f} KB")
-    print(f"Ave Duration: {ave_duration_sec:.2f} sec")
-    print(f"Ave Read BW: {ave_read_bw_mb:.2f} MB/s")
-    print(f"Ave Write BW: {ave_write_bw_mb:.2f} MB/s")
-    print(f"Read BW Stdev: {ave_read_bw_stdev:.2f} MB/s")
-    print(f"Write BW Stdev: {ave_write_bw_stdev:.2f} MB/s")
-
-
+    print(f"T1 Trial Ave Read Count: {sum(all_read_cnt)/len(all_read_cnt)}")
+    print(f"T1 Trial Ave Write Count: {sum(all_write_cnt)/len(all_write_cnt)}")
+    print(f"T1 Trial Ave Read Size: {sum(all_read_size_byte)/len(all_read_size_byte)}")
+    print(f"T1 Trial Ave Write Size: {sum(all_write_size_byte)/len(all_write_size_byte)}")
+    print(f"T1 Trial Ave STDIO Open: {sum(all_stdio_open)/len(all_stdio_open)}")
+    print(f"T1 Trial Ave Read Ave KB: {sum(all_read_ave_kb)/len(all_read_ave_kb):.4f}")
+    print(f"T1 Trial Ave Write Ave KB: {sum(all_write_ave_kb)/len(all_write_ave_kb):.4f}")
+    print(f"T1 Trial Ave Duration (sec): {sum(all_duration_sec)/len(all_duration_sec):.4f}")
+    print(f"T1 Trial Ave Read BW (MB/s): {sum(all_read_bw_mb)/len(all_read_bw_mb):.4f}")
+    print(f"T1 Trial Ave Write BW (MB/s): {sum(all_write_bw_mb)/len(all_write_bw_mb):.4f}")
+    print(f"T1 Trial Ave Read BW Stdev: {ave_read_bw_stdev:.4f}")
+    print(f"T1 Trial Ave Write BW Stdev: {ave_write_bw_stdev:.4f}")
 
 
 if __name__ == "__main__":
