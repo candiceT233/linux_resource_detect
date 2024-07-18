@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH --job-name=localssd_ior_test
+#SBATCH --job-name=beegfs_ior_test
 #SBATCH --partition=slurm
-#SBATCH --time=8:00:00
+#SBATCH --time=20:00:00
 #SBATCH -N 1
 #SBATCH --output=./ior_%x_R.out
 #SBATCH --error=./ior_%x_R.err
@@ -54,8 +54,9 @@ DROP_CACHE_CMD="sudo /sbin/sysctl vm.drop_caches=3"
 #     exit 1
 # fi
 
-TEST_DIR="///scratch/$USER"
-RESULT_DIR="$HOME/scripts/linux_resource_detect/io_test/pnnl_deception_slurm/local_ssd_ior_buffered"
+# TEST_DIR="///scratch/$USER"
+TEST_DIR="///rcfs/projects/chess/$USER"
+RESULT_DIR="$HOME/scripts/linux_resource_detect/io_test/pnnl_deception_slurm/beegfs_ior_buffered"
 
 
 # Check if paths are valid
@@ -176,11 +177,12 @@ RUN_IOR_MEM_DISK_TEST(){
     mkdir -p $FS
     sudo /sbin/sysctl vm.drop_caches=3
     
-    for tsize in 4m 16m 64m 256m 1024m; do # 64 1k 4k 1m 
+    for tsize in 64 1k 4k 1m; do # 64 1k 4k 1m 4m 16m 64m 256m 1024m
         for trial in 1 2 3; do
             test_name="ior_${tsize}_1gb_${trial}"
             test_file="$FS/${test_name}.bin"
 
+            tsize_byte=64
             # convert tsize from mb to bytes
             if [[ $tsize == *k ]]; then
                 tsize_byte=$(echo $tsize | sed 's/k//')
@@ -209,7 +211,7 @@ RUN_IOR_MEM_DISK_TEST(){
     mkdir -p $FS
     sudo /sbin/sysctl vm.drop_caches=3
 
-    for tsize in 4m 16m 64m 256m 1024m; do # 64 1k 4k 1m 
+    for tsize in 64 1k 4k 1m; do # 64 1k 4k 1m 4m 16m 64m 256m 1024m
         for trial in 1 2 3; do
             test_name="ior_${tsize}_5gb_${trial}"
             test_file="$FS/${test_name}.bin"
@@ -242,7 +244,7 @@ RUN_IOR_MEM_DISK_TEST(){
     mkdir -p $FS
     sudo /sbin/sysctl vm.drop_caches=3
 
-    for tsize in 4m 16m 64m 256m 1024m; do # 64 1k 4k 1m 
+    for tsize in 64 1k 4k 1m; do # 64 1k 4k 1m 4m 16m 64m 256m 1024m
         for trial in 1 2 3; do
             test_name="ior_${tsize}_50gb_${trial}"
             test_file="$FS/${test_name}.bin"
@@ -275,7 +277,7 @@ RUN_IOR_MEM_DISK_TEST(){
     mkdir -p $FS
     sudo /sbin/sysctl vm.drop_caches=3
 
-    for tsize in 4m 16m 64m 256m 1024m; do # 64 1k 4k 1m 
+    for tsize in 1k 4k 1m; do # 64 1k 4k 1m 4m 16m 64m 256m 1024m
         for trial in 1 2 3; do
             test_name="ior_${tsize}_100gb_${trial}"
             test_file="$FS/${test_name}.bin"
@@ -308,7 +310,7 @@ RUN_IOR_MEM_DISK_TEST(){
     mkdir -p $FS
     sudo /sbin/sysctl vm.drop_caches=3
 
-    for tsize in 4m 16m 64m 256m 1024m; do # 64 1k 4k 1m 
+    for tsize in 1k 4k 1m; do # 64 1k 4k 1m 4m 16m 64m 256m 1024m
         for trial in 1 2 3; do
             test_name="ior_${tsize}_300gb_${trial}"
             test_file="$FS/${test_name}.bin"
