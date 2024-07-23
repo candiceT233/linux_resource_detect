@@ -32,12 +32,18 @@ echo "Start sG1IterDcon --------------------------------"
 
 num_files="${#all_input_file[@]}"
 
-# Darshan Environment Variables
-export DARSHAN_ENABLE_NONMPI=1
-export DARSHAN_MOD_ENABLE="DXT_POSIX" #DXT_MPIIO
+# # Darshan Environment Variables
+# export DARSHAN_ENABLE_NONMPI=1
+# export DARSHAN_MOD_ENABLE="DXT_POSIX" #DXT_MPIIO
 # export LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so io-test
 # export DARSHAN_LOGHINTS="romio_no_indep_rw=true;cb_nodes=1"
 # export DXT_ENABLE_IO_TRACE=1
+DATALIFE_LIB_PATH=/qfs/people/tang584/install/datalife/lib/libmonitor.so
+
+# Cleanup previous logs
+TAZER_STAT_LOG=tazer_stat.log
+rm -rf ./*$TAZER_STAT_LOG.log
+DATALIFE_STAT_LOG_FOLDER=/qfs/people/tang584/scripts/linux_resource_detect/io_test/datalife_seism
 
 # for t in {1..$}; do
 # for input_file in ${all_input_file[@]}; do
@@ -47,8 +53,9 @@ for ((i = 0; i < num_files; i++)); do
     cd run_$input_file
 
     echo "Running input ${input_file}"
-    LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so \
-        bash $IterDecon_BIN/sG1IterDecon $MSHOCK_DATA_PATH/${input_file} $EGF_INPUT_PATH/${input_file} &
+    # LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so \
+    LD_PRELOAD=$DATALIFE_LIB_PATH \
+        bash $IterDecon_BIN/sG1IterDecon $MSHOCK_DATA_PATH/${input_file} $EGF_INPUT_PATH/${input_file} 2>&1 | tee -a $DATALIFE_STAT_LOG_FOLDER/iterdecon_n${CONCURRENCY}_f${INPUT_FILE_NUM}_${TAZER_STAT_LOG} #&
     cd $EXP_DATA_PATH
 
     task_num=$(($i + 1))
@@ -84,8 +91,9 @@ file_str=$(realpath $EXP_DATA_PATH/* | grep ".stf" | tr '\n' ' ')
 # echo "Files: $file_str"
 
 set -x
-LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so \
-    python3 $IterDecon_BIN/siftSTFByMisfit.py $file_str
+# LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so \
+LD_PRELOAD=$DATALIFE_LIB_PATH \
+    python3 $IterDecon_BIN/siftSTFByMisfit.py $file_str 2>&1 | tee $DATALIFE_STAT_LOG_FOLDER/sift_n${CONCURRENCY}_f${INPUT_FILE_NUM}_${TAZER_STAT_LOG}
 set +x
 
 time_3=$(($(date +%s%N)/1000000))
@@ -101,3 +109,7 @@ set -x
 # ls -l $EXP_DATA_PATH | grep ".stf" | wc -l
 ls -l $EXP_DATA_PATH | grep "good-fit" | wc -l
 du -k $EXP_DATA_PATH/*.stf
+
+mv ./*$TAZER_STAT_LOG.log $DATALIFE_STAT_LOG_FOLDER/
+mv $MSHOCK_DATA_PATH/*_trace_stat $DATALIFE_STAT_LOG_FOLDER/
+mv $EGF_INPUT_PATH/*_trace_stat $DATALIFE_STAT_LOG_FOLDER/

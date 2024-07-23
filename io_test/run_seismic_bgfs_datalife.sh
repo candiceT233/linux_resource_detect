@@ -14,8 +14,8 @@ EGF_INPUT_PATH=$EXP_DATA_PATH/EGF
 
 # CONCURRENCY=$1 # test 5 10 20
 # INPUT_FILE_NUM=$2
-CONCURRENCY=1 # test 5 10 20
-INPUT_FILE_NUM=2
+CONCURRENCY=$1 # test 5 10 20
+INPUT_FILE_NUM=$2
 
 # Check user input
 if [ -z "$CONCURRENCY" ]; then
@@ -41,6 +41,9 @@ cd $EXP_DATA_PATH
 # cleanup data
 rm -rf $EXP_DATA_PATH/*.stf
 rm -rf $EXP_DATA_PATH/*good-fit*
+rm -rf $MSHOCK_DATA_PATH/*_blk_trace
+rm -rf $EGF_INPUT_PATH/*_blk_trace
+rm -rf $EXP_DATA_PATH/*_blk_trace
 
 # record start time in milliseconds
 time_1=$(($(date +%s%N)/1000000))
@@ -72,7 +75,7 @@ DATALIFE_LIB_PATH=/qfs/people/tang584/install/datalife/lib/libmonitor.so
 # Cleanup previous logs
 TAZER_STAT_LOG=tazer_stat.log
 rm -rf ./*$TAZER_STAT_LOG.log
-DATALIFE_STAT_LOG_FOLDER=/qfs/people/tang584/scripts/linux_resource_detect/io_test/datalife_seism
+DATALIFE_STAT_LOG_FOLDER=/qfs/people/tang584/scripts/linux_resource_detect/io_test/datalife_seism_bgfs
 mkdir -p $DATALIFE_STAT_LOG_FOLDER
 rm -rf $DATALIFE_STAT_LOG_FOLDER/*
 
@@ -89,9 +92,11 @@ for ((i = 0; i < num_files; i++)); do
 
     # datalife-run \
 
-    cd $IterDecon_BIN
-    ./sG1IterDecon $MSHOCK_DATA_PATH/${input_file} $EGF_INPUT_PATH/${input_file} 2>&1 | tee -a iterdecon_${i}_${TAZER_STAT_LOG} #&
-    cd $EXP_DATA_PATH
+    # cd $IterDecon_BIN
+    LD_PRELOAD=$DATALIFE_LIB_PATH \
+        sh $IterDecon_BIN/sG1IterDecon $MSHOCK_DATA_PATH/${input_file} $EGF_INPUT_PATH/${input_file} 2>&1 | tee -a $DATALIFE_STAT_LOG_FOLDER/iterdecon_n${CONCURRENCY}_f${INPUT_FILE_NUM}_${TAZER_STAT_LOG} #&
+    
+    # cd $EXP_DATA_PATH
 
     task_num=$(($i + 1))
     # check if wait is needed
@@ -133,7 +138,8 @@ set -x
 
 
 # datalife-run \
-python3 $IterDecon_BIN/siftSTFByMisfit.py $file_str 2>&1 | tee -a sift_${TAZER_STAT_LOG}
+LD_PRELOAD=$DATALIFE_LIB_PATH \
+    python3 $IterDecon_BIN/siftSTFByMisfit.py $file_str 2>&1 | tee sift_n${CONCURRENCY}_f${INPUT_FILE_NUM}_${TAZER_STAT_LOG}
 
 set +x
 
@@ -154,13 +160,19 @@ set -x
 ls -l $EXP_DATA_PATH | grep "good-fit" | wc -l | tee a sift_${TAZER_STAT_LOG}
 du -k $EXP_DATA_PATH/*.stf | tee a sift_${TAZER_STAT_LOG}
 
-mv ./*$TAZER_STAT_LOG.log $DATALIFE_STAT_LOG_FOLDER/
-mv $MSHOCK_DATA_PATH/*_trace_stat $DATALIFE_STAT_LOG_FOLDER/
-mv $EGF_INPUT_PATH/*_trace_stat $DATALIFE_STAT_LOG_FOLDER/
-
+mv ./*.log $DATALIFE_STAT_LOG_FOLDER/
+mv $MSHOCK_DATA_PATH/*_blk_trace $DATALIFE_STAT_LOG_FOLDER/
+mv $EGF_INPUT_PATH/*_blk_trace $DATALIFE_STAT_LOG_FOLDER/
+mv $EXP_DATA_PATH/*_blk_trace $DATALIFE_STAT_LOG_FOLDER/
 
 # 1 2
 ## Without Datalife
 # Duration sG1IterDcon: 9644 ms [9.64 sec]
 # Duration siftSTFByMisfit.py: 550 ms [.55 sec
-## Witj Datalife
+## With datalife and without GATHERSTAT
+# Duration sG1IterDcon: 123763 ms [123.76 sec]
+# Duration siftSTFByMisfit.py: 1069 ms [1.06 sec
+# Duration sG1IterDcon: 141266 ms [141.26 sec]
+# Duration siftSTFByMisfit.py: 2574 ms [2.57 sec
+# Duration sG1IterDcon: 4006 ms [4.00 sec]
+# Duration siftSTFByMisfit.py: 1043 ms [1.04 sec
