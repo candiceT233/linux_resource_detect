@@ -21,7 +21,7 @@ NODE_NAMES=`echo $SLURM_JOB_NODELIST|scontrol show hostnames`
 LOCAL="SSD" # SSD SHM
 # SHARE="PFS" # PFS NFS
 TRIAL="t3" # 1 2 3
-MODE="p" # p: parallel, s: sequential
+MODE="s" # p: parallel, s: sequential
 
 if [ "$LOCAL" == "SHM" ]
 then

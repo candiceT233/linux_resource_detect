@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name="deception_1nodes_ssd_1000_datalife_2"
-#SBATCH --partition=slurm
+#SBATCH --job-name="deception_1nodes_ssd_1000_datalife_test"
+#SBATCH --partition=ondemand
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=60
-#SBATCH --time=03:30:00
+#SBATCH --time=00:30:00
 #SBATCH --output=R_%x.out
 #SBATCH --error=R_%x.err
 #SBATCH --mail-type=FAIL
@@ -19,26 +19,25 @@ rm -rf *.datalife.json *blk_trace.json
 
 NODE_NAMES=`echo $SLURM_JOB_NODELIST|scontrol show hostnames`
 LOCAL="SSD" # SSD SHM
-# SHARE="PFS" # PFS NFS
-TRIAL="t2" # 1 2 3
-MODE="s" # p: parallel, s: sequential
+SHARE="PFS" # PFS(1.5 mins) NFS(5 mins)
+TRIAL="1" # 1 2 3
+MODE="p" # p: parallel, s: sequential
 
 if [ "$LOCAL" == "SHM" ]
 then
-    echo "Running on ramdisk"; export LOCAL_STORE="/dev/shm/$USER" #shm
-    rm -rf $LOCAL_STORE/*
+    echo "Running on ramdisk"; export LOCAL_STORE="/dev/shm/$USER/1kgenomedata" #shm
 else
-    echo "Running on SSD"; export LOCAL_STORE="/scratch/$USER"
+    echo "Running on SSD"; export LOCAL_STORE="/scratch/$USER/1kgenomedata"
 fi
 
 if [ "$SHARE" == "NFS" ]
 then
-    echo "Running on NFS"
+    echo "Data from NFS"
     SCRIPT_DIR=/qfs/projects/oddite/tang584/1000genome-workflow/bin
     DATA_DIR=/qfs/people/tang584/scripts/1kgenome_sbatch_deception #NFS
     # DATA_DIR=/qfs/projects/oddite/lenny/hermes_scripts/1kgenome_sbatch_deception #NFS
 else
-    echo "Running on PFS" # but this behaves like NFS
+    echo "Data from PFS" # but this behaves like NFS
     PFS_DIR=/rcfs/projects/chess #/files0/oddite
     SCRIPT_DIR=$PFS_DIR/$USER/1000genome-workflow/bin
     DATA_DIR=$PFS_DIR/$USER/1kgenome_sbatch_deception_$TRIAL #PFS
@@ -67,7 +66,7 @@ then
 fi
 
 
-PROBLEM_SIZE=40 # the maximum number of tasks within a stage !!!need to modify as needed!!!
+PROBLEM_SIZE=1 # the maximum number of tasks within a stage !!!need to modify as needed!!!
 # the `SBATCH -N -n` needs to modify as well !!!
 
 # NUM_TASKS_PER_NODE=$((($SLURM_NTASKS/$SLURM_JOB_NUM_NODES))
@@ -113,9 +112,13 @@ STAGE_IN_INDIVIDUALS () {
         running_node=${list[$node_idx]}
         let ii=i+1
         echo "staging ALL.chr${ii}.250000.vcf into node $running_node"
-        srun -n1 -N1 -w $running_node --exclusive cp $DATA_DIR/columns.txt $LOCAL_STORE/ &
-        srun -n1 -N1 -w $running_node --exclusive cp $DATA_DIR/ALL.chr${ii}.250000.vcf $LOCAL_STORE/ &
-        srun -n1 -N1 -w $running_node --exclusive cp $DATA_DIR/ALL.chr${ii}.phase3_shapeit2_mvncall_integrated_v5.20130502.sites.annotation.vcf $LOCAL_STORE/ &
+        
+        srun -n1 -N1 -w $running_node --exclusive cp -r $DATA_DIR/columns.txt $LOCAL_STORE/ &
+        srun -n1 -N1 -w $running_node --exclusive cp -r $DATA_DIR/ALL.chr${ii}.250000.vcf $LOCAL_STORE/ &
+        srun -n1 -N1 -w $running_node --exclusive cp -r $DATA_DIR/ALL.chr${ii}.phase3_shapeit2_mvncall_integrated_v5.20130502.sites.annotation.vcf $LOCAL_STORE/ &
+        # scp -r $DATA_DIR/columns.txt $running_node:$LOCAL_STORE/ &
+        # scp -r $DATA_DIR/ALL.chr${ii}.250000.vcf $running_node:$LOCAL_STORE/ &
+        # scp -r $DATA_DIR/ALL.chr${ii}.phase3_shapeit2_mvncall_integrated_v5.20130502.sites.annotation.vcf $running_node:$LOCAL_STORE/ &
         # srun -n1 -w $running_node --exclusive echo $(ls -l $LOCAL_STORE/*.vcf)
     done
 
@@ -124,7 +127,7 @@ STAGE_IN_INDIVIDUALS () {
     FNAMES=("SAS EAS GBR AMR AFR EUR ALL")
     for fn in $FNAMES
     do
-        srun -n$NUM_NODES -w $host_list --exclusive cp $DATA_DIR/$fn $LOCAL_STORE/ &
+        srun -n$NUM_NODES -w $host_list --exclusive cp -r $DATA_DIR/$fn $LOCAL_STORE/
     done
 }
 
@@ -148,12 +151,8 @@ START_INDIVIDUALS() {
                 let ii=i+1
                 # No need to change. This is the smallest input allowed.
                 echo "LD_PRELOAD=$DATALIFE_LIB_PATH srun -w $running_node -n1 -N1 --exclusive $SCRIPT_DIR/individuals_shm.py $LOCAL_STORE/ALL.chr${ii}.250000.vcf $ii $((1+j*34)) $((35+j*34)) 1020"
-                if [ "$MODE" == "p" ]
-                then
-                    LD_PRELOAD=$DATALIFE_LIB_PATH srun -w $running_node -n1 -N1 --exclusive $SCRIPT_DIR/individuals_shm.py $LOCAL_STORE/ALL.chr${ii}.250000.vcf $ii $((1+j*34)) $((35+j*34)) 1020 &
-                else
-                    LD_PRELOAD=$DATALIFE_LIB_PATH srun -w $running_node -n1 -N1 --exclusive $SCRIPT_DIR/individuals_shm.py $LOCAL_STORE/ALL.chr${ii}.250000.vcf $ii $((1+j*34)) $((35+j*34)) 1020
-                fi
+                LD_PRELOAD=$DATALIFE_LIB_PATH \
+                    srun -w $running_node -n1 -N1 --exclusive $SCRIPT_DIR/individuals_shm.py $LOCAL_STORE/ALL.chr${ii}.250000.vcf $ii $((1+j*34)) $((35+j*34)) 1020 &
 
                 counter=$(($counter + 1))
                 # echo "counter: $counter"
@@ -198,6 +197,17 @@ STAGE_OUT_INDIVIDUALS_MERGE() {
         running_node=${list[$node_idx]}
         let ii=i+1
         scp $running_node:$LOCAL_STORE/chr${ii}*.tar.gz $DATA_DIR/ &
+    done
+    # du -h $DATA_DIR/chr*n.tar.gz
+}
+
+STAGE_OUT_DATALIFE() {
+    for i in $(seq 0 9)
+    do
+        node_idx=$(($i % $NUM_NODES))
+        running_node=${list[$node_idx]}
+        let ii=i+1
+        scp $running_node:$LOCAL_STORE/*blk_trace $DATA_DIR/ &
     done
     # du -h $DATA_DIR/chr*n.tar.gz
 }
@@ -258,8 +268,8 @@ wait
 duration=$(($SECONDS - $start_time))
 echo "data stage-in for individuals : $(($duration / 60)) minutes and $(($duration % 60)) seconds elapsed ($duration secs)."
 # Check size of staged-in data
-echo "Checking staged-in data ----------------" | tee -a $CWD/R_$SLURM_JOB_NAME.out
-srun -n$NUM_NODES -w $host_list --exclusive du -k $LOCAL_STORE | tee -a $CWD/R_$SLURM_JOB_NAME.out
+echo "Checking staged-in data ----------------"
+srun -n$NUM_NODES -w $host_list --exclusive du -k $LOCAL_STORE #| tee -a $CWD/R_$SLURM_JOB_NAME.out
 
 # Stage 1 : Individuals
 start_time=$SECONDS
@@ -268,6 +278,7 @@ START_INDIVIDUALS
 wait
 duration=$(($SECONDS - $start_time))
 echo "individuals : $(($duration / 60)) minutes and $(($duration % 60)) seconds elapsed ($duration secs)."
+
 
 # # Stage 2 : Individuals merge + Sifting
 # start_time=$SECONDS
@@ -295,6 +306,8 @@ set -x
 # check output
 echo "Checking all output ----------------"
 srun -n$NUM_NODES -w $host_list --exclusive du -h $DATA_DIR
+
+
 
 # Candice: do not remove the current dir which contains all initial input for the test run
 # # remove current dir

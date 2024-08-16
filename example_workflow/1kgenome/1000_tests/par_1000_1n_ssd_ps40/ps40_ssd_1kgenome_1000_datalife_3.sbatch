@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="deception_1nodes_ssd_1000_datalife_2"
+#SBATCH --job-name="deception_1nodes_ssd_1000_datalife_3"
 #SBATCH --partition=slurm
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=60
@@ -20,8 +20,8 @@ rm -rf *.datalife.json *blk_trace.json
 NODE_NAMES=`echo $SLURM_JOB_NODELIST|scontrol show hostnames`
 LOCAL="SSD" # SSD SHM
 # SHARE="PFS" # PFS NFS
-TRIAL="t2" # 1 2 3
-MODE="s" # p: parallel, s: sequential
+TRIAL="t3" # 1 2 3
+MODE="p" # p: parallel, s: sequential
 
 if [ "$LOCAL" == "SHM" ]
 then
@@ -148,12 +148,8 @@ START_INDIVIDUALS() {
                 let ii=i+1
                 # No need to change. This is the smallest input allowed.
                 echo "LD_PRELOAD=$DATALIFE_LIB_PATH srun -w $running_node -n1 -N1 --exclusive $SCRIPT_DIR/individuals_shm.py $LOCAL_STORE/ALL.chr${ii}.250000.vcf $ii $((1+j*34)) $((35+j*34)) 1020"
-                if [ "$MODE" == "p" ]
-                then
-                    LD_PRELOAD=$DATALIFE_LIB_PATH srun -w $running_node -n1 -N1 --exclusive $SCRIPT_DIR/individuals_shm.py $LOCAL_STORE/ALL.chr${ii}.250000.vcf $ii $((1+j*34)) $((35+j*34)) 1020 &
-                else
-                    LD_PRELOAD=$DATALIFE_LIB_PATH srun -w $running_node -n1 -N1 --exclusive $SCRIPT_DIR/individuals_shm.py $LOCAL_STORE/ALL.chr${ii}.250000.vcf $ii $((1+j*34)) $((35+j*34)) 1020
-                fi
+                LD_PRELOAD=$DATALIFE_LIB_PATH \
+                    srun -w $running_node -n1 -N1 --exclusive $SCRIPT_DIR/individuals_shm.py $LOCAL_STORE/ALL.chr${ii}.250000.vcf $ii $((1+j*34)) $((35+j*34)) 1020 &
 
                 counter=$(($counter + 1))
                 # echo "counter: $counter"

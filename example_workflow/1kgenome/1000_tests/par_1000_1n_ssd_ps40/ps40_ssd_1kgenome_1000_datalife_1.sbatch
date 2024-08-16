@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="deception_1nodes_ssd_1000_datalife_2"
+#SBATCH --job-name="deception_1nodes_ssd_1000_datalife_1"
 #SBATCH --partition=slurm
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=60
@@ -20,8 +20,8 @@ rm -rf *.datalife.json *blk_trace.json
 NODE_NAMES=`echo $SLURM_JOB_NODELIST|scontrol show hostnames`
 LOCAL="SSD" # SSD SHM
 # SHARE="PFS" # PFS NFS
-TRIAL="t2" # 1 2 3
-MODE="s" # p: parallel, s: sequential
+TRIAL="t1" # 1 2 3
+MODE="p" # p: parallel, s: sequential
 
 if [ "$LOCAL" == "SHM" ]
 then
