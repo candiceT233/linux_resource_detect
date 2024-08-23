@@ -63,7 +63,7 @@ RUN_IOR (){
         FS="$FS/iortest" # add iortest folder to path
         echo "Testing $FS"
         mkdir -p $FS
-        for tsize in 64 2k 4k 8k
+        for tsize in 1m #64 2k 4k 8k
         do
             echo "Testing $tsize"
 
@@ -72,7 +72,7 @@ RUN_IOR (){
 
                 # echo "Trial $trial"
                 test_name="ior_${tsize}_n${ntask}"
-
+                
                 test_file="$FS/${test_name}.bin"
                 
                 rm $test_file 2> /dev/null
