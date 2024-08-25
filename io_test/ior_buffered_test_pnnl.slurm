@@ -76,100 +76,100 @@ cd $RESULT_DIR
 RUN_IOR_MEM_DISK_TEST(){
     # All blockSize is default at 1MB
 
-    # # Run IOR 4MB test
-    # FS="$TEST_DIR/iortest_4mb"
-    # echo "Testing $FS"
-    # mkdir -p $FS
-    # sudo /sbin/sysctl vm.drop_caches=3
+    # Run IOR 4MB test
+    FS="$TEST_DIR/iortest_4mb"
+    echo "Testing $FS"
+    mkdir -p $FS
+    sudo /sbin/sysctl vm.drop_caches=3
     
-    # for tsize in 64 1k 4k 1m; do
-    #     for trial in 1 2 3; do
-    #         echo "Testing $tsize"
-    #         test_name="ior_${tsize}_4mb_${trial}"
-    #         test_file="$FS/${test_name}.bin"
-    #         ior -a POSIX -w -r -t $tsize -s 4 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
-    #         sudo /sbin/sysctl vm.drop_caches=3
-    #         sleep 5
-    #     done
-    # done
-    # # Clean up test dir
-    # rm -rf $FS
+    for tsize in 64 1k 4k 1m; do
+        for trial in 1 2 3; do
+            echo "Testing $tsize"
+            test_name="ior_${tsize}_4mb_${trial}"
+            test_file="$FS/${test_name}.bin"
+            ior -a POSIX -w -r -t $tsize -s 4 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
+            sudo /sbin/sysctl vm.drop_caches=3
+            sleep 5
+        done
+    done
+    # Clean up test dir
+    rm -rf $FS
 
-    # # Run IOR 16MB test
-    # FS="$TEST_DIR/iortest_16mb"
-    # echo "Testing $FS"
-    # mkdir -p $FS
-    # sudo /sbin/sysctl vm.drop_caches=3
+    # Run IOR 16MB test
+    FS="$TEST_DIR/iortest_16mb"
+    echo "Testing $FS"
+    mkdir -p $FS
+    sudo /sbin/sysctl vm.drop_caches=3
     
-    # for tsize in 64 1k 4k 1m; do
-    #     for trial in 1 2 3; do
-    #         echo "Testing $tsize"
-    #         test_name="ior_${tsize}_16mb_${trial}"
-    #         test_file="$FS/${test_name}.bin"
-    #         ior -a POSIX -w -r -t $tsize -s 16 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
-    #         sudo /sbin/sysctl vm.drop_caches=3
-    #         sleep 5
-    #     done
-    # done
-    # # Clean up test dir
-    # rm -rf $FS
+    for tsize in 64 1k 4k 1m; do
+        for trial in 1 2 3; do
+            echo "Testing $tsize"
+            test_name="ior_${tsize}_16mb_${trial}"
+            test_file="$FS/${test_name}.bin"
+            ior -a POSIX -w -r -t $tsize -s 16 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
+            sudo /sbin/sysctl vm.drop_caches=3
+            sleep 5
+        done
+    done
+    # Clean up test dir
+    rm -rf $FS
 
-    # # Run IOR 64MB test
-    # FS="$TEST_DIR/iortest_64mb"
-    # echo "Testing $FS"
-    # mkdir -p $FS
-    # sudo /sbin/sysctl vm.drop_caches=3
+    # Run IOR 64MB test
+    FS="$TEST_DIR/iortest_64mb"
+    echo "Testing $FS"
+    mkdir -p $FS
+    sudo /sbin/sysctl vm.drop_caches=3
     
-    # for tsize in 64 1k 4k 1m; do
-    #     for trial in 1 2 3; do
-    #         echo "Testing $tsize"
-    #         test_name="ior_${tsize}_64mb_${trial}"
-    #         test_file="$FS/${test_name}.bin"
-    #         ior -a POSIX -w -r -t $tsize -s 64 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
-    #         sudo /sbin/sysctl vm.drop_caches=3
-    #         sleep 5
-    #     done
-    # done
-    # # Clean up test dir
-    # rm -rf $FS
+    for tsize in 64 1k 4k 1m; do
+        for trial in 1 2 3; do
+            echo "Testing $tsize"
+            test_name="ior_${tsize}_64mb_${trial}"
+            test_file="$FS/${test_name}.bin"
+            ior -a POSIX -w -r -t $tsize -s 64 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
+            sudo /sbin/sysctl vm.drop_caches=3
+            sleep 5
+        done
+    done
+    # Clean up test dir
+    rm -rf $FS
 
-    # # Run IOR 256MB test
-    # FS="$TEST_DIR/iortest_256mb"
-    # echo "Testing $FS"
-    # mkdir -p $FS
-    # sudo /sbin/sysctl vm.drop_caches=3
+    # Run IOR 256MB test
+    FS="$TEST_DIR/iortest_256mb"
+    echo "Testing $FS"
+    mkdir -p $FS
+    sudo /sbin/sysctl vm.drop_caches=3
     
-    # for tsize in 64 1k 4k 1m; do
-    #     for trial in 1 2 3; do
-    #         echo "Testing $tsize"
-    #         test_name="ior_${tsize}_256mb_${trial}"
-    #         test_file="$FS/${test_name}.bin"
-    #         ior -a POSIX -w -r -t $tsize -s 256 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
-    #         sudo /sbin/sysctl vm.drop_caches=3
-    #         sleep 5
-    #     done
-    # done
-    # # Clean up test dir
-    # rm -rf $FS
+    for tsize in 64 1k 4k 1m; do
+        for trial in 1 2 3; do
+            echo "Testing $tsize"
+            test_name="ior_${tsize}_256mb_${trial}"
+            test_file="$FS/${test_name}.bin"
+            ior -a POSIX -w -r -t $tsize -s 256 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
+            sudo /sbin/sysctl vm.drop_caches=3
+            sleep 5
+        done
+    done
+    # Clean up test dir
+    rm -rf $FS
 
-    # # Run IOR 512MB test
-    # FS="$TEST_DIR/iortest_512mb"
-    # echo "Testing $FS"
-    # mkdir -p $FS
-    # sudo /sbin/sysctl vm.drop_caches=3
+    # Run IOR 512MB test
+    FS="$TEST_DIR/iortest_512mb"
+    echo "Testing $FS"
+    mkdir -p $FS
+    sudo /sbin/sysctl vm.drop_caches=3
 
-    # for tsize in 64 1k 4k 1m; do
-    #     for trial in 1 2 3; do
-    #         echo "Testing $tsize"
-    #         test_name="ior_${tsize}_512mb_${trial}"
-    #         test_file="$FS/${test_name}.bin"
-    #         ior -a POSIX -w -r -t $tsize -s 512 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
-    #         sudo /sbin/sysctl vm.drop_caches=3
-    #         sleep 5
-    #     done
-    # done
-    # # Clean up test dir
-    # rm -rf $FS
+    for tsize in 64 1k 4k 1m; do
+        for trial in 1 2 3; do
+            echo "Testing $tsize"
+            test_name="ior_${tsize}_512mb_${trial}"
+            test_file="$FS/${test_name}.bin"
+            ior -a POSIX -w -r -t $tsize -s 512 -e -F -o $test_file -O summaryFormat=JSON -O summaryFile=${test_name}.json
+            sudo /sbin/sysctl vm.drop_caches=3
+            sleep 5
+        done
+    done
+    # Clean up test dir
+    rm -rf $FS
 
     # Run IOR 1GB
     FS="$TEST_DIR/iortest_1gb"
