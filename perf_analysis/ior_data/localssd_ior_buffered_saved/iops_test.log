@@ -1,0 +1,310 @@
+Testing ///scratch/tang584/iortest_1gb
+vm.drop_caches = 3
+Testing 4m with segment count 256
+ior -a POSIX -w -r -t 4m -s 256 -b 4m -e -F -o ///scratch/tang584/iortest_1gb/ior_4m_1gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_4m_1gb_1.json
+Writing output to ior_4m_1gb_1.json
+vm.drop_caches = 3
+Testing 4m with segment count 256
+ior -a POSIX -w -r -t 4m -s 256 -b 4m -e -F -o ///scratch/tang584/iortest_1gb/ior_4m_1gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_4m_1gb_2.json
+Writing output to ior_4m_1gb_2.json
+vm.drop_caches = 3
+Testing 4m with segment count 256
+ior -a POSIX -w -r -t 4m -s 256 -b 4m -e -F -o ///scratch/tang584/iortest_1gb/ior_4m_1gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_4m_1gb_3.json
+Writing output to ior_4m_1gb_3.json
+vm.drop_caches = 3
+Testing 16m with segment count 64
+ior -a POSIX -w -r -t 16m -s 64 -b 16m -e -F -o ///scratch/tang584/iortest_1gb/ior_16m_1gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_16m_1gb_1.json
+Writing output to ior_16m_1gb_1.json
+vm.drop_caches = 3
+Testing 16m with segment count 64
+ior -a POSIX -w -r -t 16m -s 64 -b 16m -e -F -o ///scratch/tang584/iortest_1gb/ior_16m_1gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_16m_1gb_2.json
+Writing output to ior_16m_1gb_2.json
+vm.drop_caches = 3
+Testing 16m with segment count 64
+ior -a POSIX -w -r -t 16m -s 64 -b 16m -e -F -o ///scratch/tang584/iortest_1gb/ior_16m_1gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_16m_1gb_3.json
+Writing output to ior_16m_1gb_3.json
+vm.drop_caches = 3
+Testing 64m with segment count 16
+ior -a POSIX -w -r -t 64m -s 16 -b 64m -e -F -o ///scratch/tang584/iortest_1gb/ior_64m_1gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_64m_1gb_1.json
+Writing output to ior_64m_1gb_1.json
+vm.drop_caches = 3
+Testing 64m with segment count 16
+ior -a POSIX -w -r -t 64m -s 16 -b 64m -e -F -o ///scratch/tang584/iortest_1gb/ior_64m_1gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_64m_1gb_2.json
+Writing output to ior_64m_1gb_2.json
+vm.drop_caches = 3
+Testing 64m with segment count 16
+ior -a POSIX -w -r -t 64m -s 16 -b 64m -e -F -o ///scratch/tang584/iortest_1gb/ior_64m_1gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_64m_1gb_3.json
+Writing output to ior_64m_1gb_3.json
+vm.drop_caches = 3
+Testing 256m with segment count 4
+ior -a POSIX -w -r -t 256m -s 4 -b 256m -e -F -o ///scratch/tang584/iortest_1gb/ior_256m_1gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_256m_1gb_1.json
+Writing output to ior_256m_1gb_1.json
+vm.drop_caches = 3
+Testing 256m with segment count 4
+ior -a POSIX -w -r -t 256m -s 4 -b 256m -e -F -o ///scratch/tang584/iortest_1gb/ior_256m_1gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_256m_1gb_2.json
+Writing output to ior_256m_1gb_2.json
+vm.drop_caches = 3
+Testing 256m with segment count 4
+ior -a POSIX -w -r -t 256m -s 4 -b 256m -e -F -o ///scratch/tang584/iortest_1gb/ior_256m_1gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_256m_1gb_3.json
+Writing output to ior_256m_1gb_3.json
+vm.drop_caches = 3
+Testing 1024m with segment count 1
+ior -a POSIX -w -r -t 1024m -s 1 -b 1024m -e -F -o ///scratch/tang584/iortest_1gb/ior_1024m_1gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_1gb_1.json
+Writing output to ior_1024m_1gb_1.json
+vm.drop_caches = 3
+Testing 1024m with segment count 1
+ior -a POSIX -w -r -t 1024m -s 1 -b 1024m -e -F -o ///scratch/tang584/iortest_1gb/ior_1024m_1gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_1gb_2.json
+Writing output to ior_1024m_1gb_2.json
+vm.drop_caches = 3
+Testing 1024m with segment count 1
+ior -a POSIX -w -r -t 1024m -s 1 -b 1024m -e -F -o ///scratch/tang584/iortest_1gb/ior_1024m_1gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_1gb_3.json
+Writing output to ior_1024m_1gb_3.json
+vm.drop_caches = 3
+Testing ///scratch/tang584/iortest_5gb
+vm.drop_caches = 3
+Testing 4m with segment count 1280
+ior -a POSIX -w -r -t 4m -s 1280 -b 4m -e -F -o ///scratch/tang584/iortest_5gb/ior_4m_5gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_4m_5gb_1.json
+Writing output to ior_4m_5gb_1.json
+vm.drop_caches = 3
+Testing 4m with segment count 1280
+ior -a POSIX -w -r -t 4m -s 1280 -b 4m -e -F -o ///scratch/tang584/iortest_5gb/ior_4m_5gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_4m_5gb_2.json
+Writing output to ior_4m_5gb_2.json
+vm.drop_caches = 3
+Testing 4m with segment count 1280
+ior -a POSIX -w -r -t 4m -s 1280 -b 4m -e -F -o ///scratch/tang584/iortest_5gb/ior_4m_5gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_4m_5gb_3.json
+Writing output to ior_4m_5gb_3.json
+vm.drop_caches = 3
+Testing 16m with segment count 320
+ior -a POSIX -w -r -t 16m -s 320 -b 16m -e -F -o ///scratch/tang584/iortest_5gb/ior_16m_5gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_16m_5gb_1.json
+Writing output to ior_16m_5gb_1.json
+vm.drop_caches = 3
+Testing 16m with segment count 320
+ior -a POSIX -w -r -t 16m -s 320 -b 16m -e -F -o ///scratch/tang584/iortest_5gb/ior_16m_5gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_16m_5gb_2.json
+Writing output to ior_16m_5gb_2.json
+vm.drop_caches = 3
+Testing 16m with segment count 320
+ior -a POSIX -w -r -t 16m -s 320 -b 16m -e -F -o ///scratch/tang584/iortest_5gb/ior_16m_5gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_16m_5gb_3.json
+Writing output to ior_16m_5gb_3.json
+vm.drop_caches = 3
+Testing 64m with segment count 80
+ior -a POSIX -w -r -t 64m -s 80 -b 64m -e -F -o ///scratch/tang584/iortest_5gb/ior_64m_5gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_64m_5gb_1.json
+Writing output to ior_64m_5gb_1.json
+vm.drop_caches = 3
+Testing 64m with segment count 80
+ior -a POSIX -w -r -t 64m -s 80 -b 64m -e -F -o ///scratch/tang584/iortest_5gb/ior_64m_5gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_64m_5gb_2.json
+Writing output to ior_64m_5gb_2.json
+vm.drop_caches = 3
+Testing 64m with segment count 80
+ior -a POSIX -w -r -t 64m -s 80 -b 64m -e -F -o ///scratch/tang584/iortest_5gb/ior_64m_5gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_64m_5gb_3.json
+Writing output to ior_64m_5gb_3.json
+vm.drop_caches = 3
+Testing 256m with segment count 20
+ior -a POSIX -w -r -t 256m -s 20 -b 256m -e -F -o ///scratch/tang584/iortest_5gb/ior_256m_5gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_256m_5gb_1.json
+Writing output to ior_256m_5gb_1.json
+vm.drop_caches = 3
+Testing 256m with segment count 20
+ior -a POSIX -w -r -t 256m -s 20 -b 256m -e -F -o ///scratch/tang584/iortest_5gb/ior_256m_5gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_256m_5gb_2.json
+Writing output to ior_256m_5gb_2.json
+vm.drop_caches = 3
+Testing 256m with segment count 20
+ior -a POSIX -w -r -t 256m -s 20 -b 256m -e -F -o ///scratch/tang584/iortest_5gb/ior_256m_5gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_256m_5gb_3.json
+Writing output to ior_256m_5gb_3.json
+vm.drop_caches = 3
+Testing 1024m with segment count 5
+ior -a POSIX -w -r -t 1024m -s 5 -b 1024m -e -F -o ///scratch/tang584/iortest_5gb/ior_1024m_5gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_5gb_1.json
+Writing output to ior_1024m_5gb_1.json
+vm.drop_caches = 3
+Testing 1024m with segment count 5
+ior -a POSIX -w -r -t 1024m -s 5 -b 1024m -e -F -o ///scratch/tang584/iortest_5gb/ior_1024m_5gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_5gb_2.json
+Writing output to ior_1024m_5gb_2.json
+vm.drop_caches = 3
+Testing 1024m with segment count 5
+ior -a POSIX -w -r -t 1024m -s 5 -b 1024m -e -F -o ///scratch/tang584/iortest_5gb/ior_1024m_5gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_5gb_3.json
+Writing output to ior_1024m_5gb_3.json
+vm.drop_caches = 3
+Testing ///scratch/tang584/iortest_50gb
+vm.drop_caches = 3
+Testing 4m with segment count 12800
+ior -a POSIX -w -r -t 4m -s 12800 -b 4m -e -F -o ///scratch/tang584/iortest_50gb/ior_4m_50gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_4m_50gb_1.json
+Writing output to ior_4m_50gb_1.json
+vm.drop_caches = 3
+Testing 4m with segment count 12800
+ior -a POSIX -w -r -t 4m -s 12800 -b 4m -e -F -o ///scratch/tang584/iortest_50gb/ior_4m_50gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_4m_50gb_2.json
+Writing output to ior_4m_50gb_2.json
+vm.drop_caches = 3
+Testing 4m with segment count 12800
+ior -a POSIX -w -r -t 4m -s 12800 -b 4m -e -F -o ///scratch/tang584/iortest_50gb/ior_4m_50gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_4m_50gb_3.json
+Writing output to ior_4m_50gb_3.json
+vm.drop_caches = 3
+Testing 16m with segment count 3200
+ior -a POSIX -w -r -t 16m -s 3200 -b 16m -e -F -o ///scratch/tang584/iortest_50gb/ior_16m_50gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_16m_50gb_1.json
+Writing output to ior_16m_50gb_1.json
+vm.drop_caches = 3
+Testing 16m with segment count 3200
+ior -a POSIX -w -r -t 16m -s 3200 -b 16m -e -F -o ///scratch/tang584/iortest_50gb/ior_16m_50gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_16m_50gb_2.json
+Writing output to ior_16m_50gb_2.json
+vm.drop_caches = 3
+Testing 16m with segment count 3200
+ior -a POSIX -w -r -t 16m -s 3200 -b 16m -e -F -o ///scratch/tang584/iortest_50gb/ior_16m_50gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_16m_50gb_3.json
+Writing output to ior_16m_50gb_3.json
+vm.drop_caches = 3
+Testing 64m with segment count 800
+ior -a POSIX -w -r -t 64m -s 800 -b 64m -e -F -o ///scratch/tang584/iortest_50gb/ior_64m_50gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_64m_50gb_1.json
+Writing output to ior_64m_50gb_1.json
+vm.drop_caches = 3
+Testing 64m with segment count 800
+ior -a POSIX -w -r -t 64m -s 800 -b 64m -e -F -o ///scratch/tang584/iortest_50gb/ior_64m_50gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_64m_50gb_2.json
+Writing output to ior_64m_50gb_2.json
+vm.drop_caches = 3
+Testing 64m with segment count 800
+ior -a POSIX -w -r -t 64m -s 800 -b 64m -e -F -o ///scratch/tang584/iortest_50gb/ior_64m_50gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_64m_50gb_3.json
+Writing output to ior_64m_50gb_3.json
+vm.drop_caches = 3
+Testing 256m with segment count 200
+ior -a POSIX -w -r -t 256m -s 200 -b 256m -e -F -o ///scratch/tang584/iortest_50gb/ior_256m_50gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_256m_50gb_1.json
+Writing output to ior_256m_50gb_1.json
+vm.drop_caches = 3
+Testing 256m with segment count 200
+ior -a POSIX -w -r -t 256m -s 200 -b 256m -e -F -o ///scratch/tang584/iortest_50gb/ior_256m_50gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_256m_50gb_2.json
+Writing output to ior_256m_50gb_2.json
+vm.drop_caches = 3
+Testing 256m with segment count 200
+ior -a POSIX -w -r -t 256m -s 200 -b 256m -e -F -o ///scratch/tang584/iortest_50gb/ior_256m_50gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_256m_50gb_3.json
+Writing output to ior_256m_50gb_3.json
+vm.drop_caches = 3
+Testing 1024m with segment count 50
+ior -a POSIX -w -r -t 1024m -s 50 -b 1024m -e -F -o ///scratch/tang584/iortest_50gb/ior_1024m_50gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_50gb_1.json
+Writing output to ior_1024m_50gb_1.json
+vm.drop_caches = 3
+Testing 1024m with segment count 50
+ior -a POSIX -w -r -t 1024m -s 50 -b 1024m -e -F -o ///scratch/tang584/iortest_50gb/ior_1024m_50gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_50gb_2.json
+Writing output to ior_1024m_50gb_2.json
+vm.drop_caches = 3
+Testing 1024m with segment count 50
+ior -a POSIX -w -r -t 1024m -s 50 -b 1024m -e -F -o ///scratch/tang584/iortest_50gb/ior_1024m_50gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_50gb_3.json
+Writing output to ior_1024m_50gb_3.json
+vm.drop_caches = 3
+Testing ///scratch/tang584/iortest_100gb
+vm.drop_caches = 3
+Testing 4m with segment count 25600
+ior -a POSIX -w -r -t 4m -s 25600 -b 4m -e -F -o ///scratch/tang584/iortest_100gb/ior_4m_100gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_4m_100gb_1.json
+Writing output to ior_4m_100gb_1.json
+vm.drop_caches = 3
+Testing 4m with segment count 25600
+ior -a POSIX -w -r -t 4m -s 25600 -b 4m -e -F -o ///scratch/tang584/iortest_100gb/ior_4m_100gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_4m_100gb_2.json
+Writing output to ior_4m_100gb_2.json
+vm.drop_caches = 3
+Testing 4m with segment count 25600
+ior -a POSIX -w -r -t 4m -s 25600 -b 4m -e -F -o ///scratch/tang584/iortest_100gb/ior_4m_100gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_4m_100gb_3.json
+Writing output to ior_4m_100gb_3.json
+vm.drop_caches = 3
+Testing 16m with segment count 6400
+ior -a POSIX -w -r -t 16m -s 6400 -b 16m -e -F -o ///scratch/tang584/iortest_100gb/ior_16m_100gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_16m_100gb_1.json
+Writing output to ior_16m_100gb_1.json
+vm.drop_caches = 3
+Testing 16m with segment count 6400
+ior -a POSIX -w -r -t 16m -s 6400 -b 16m -e -F -o ///scratch/tang584/iortest_100gb/ior_16m_100gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_16m_100gb_2.json
+Writing output to ior_16m_100gb_2.json
+vm.drop_caches = 3
+Testing 16m with segment count 6400
+ior -a POSIX -w -r -t 16m -s 6400 -b 16m -e -F -o ///scratch/tang584/iortest_100gb/ior_16m_100gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_16m_100gb_3.json
+Writing output to ior_16m_100gb_3.json
+vm.drop_caches = 3
+Testing 64m with segment count 1600
+ior -a POSIX -w -r -t 64m -s 1600 -b 64m -e -F -o ///scratch/tang584/iortest_100gb/ior_64m_100gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_64m_100gb_1.json
+Writing output to ior_64m_100gb_1.json
+vm.drop_caches = 3
+Testing 64m with segment count 1600
+ior -a POSIX -w -r -t 64m -s 1600 -b 64m -e -F -o ///scratch/tang584/iortest_100gb/ior_64m_100gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_64m_100gb_2.json
+Writing output to ior_64m_100gb_2.json
+vm.drop_caches = 3
+Testing 64m with segment count 1600
+ior -a POSIX -w -r -t 64m -s 1600 -b 64m -e -F -o ///scratch/tang584/iortest_100gb/ior_64m_100gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_64m_100gb_3.json
+Writing output to ior_64m_100gb_3.json
+vm.drop_caches = 3
+Testing 256m with segment count 400
+ior -a POSIX -w -r -t 256m -s 400 -b 256m -e -F -o ///scratch/tang584/iortest_100gb/ior_256m_100gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_256m_100gb_1.json
+Writing output to ior_256m_100gb_1.json
+vm.drop_caches = 3
+Testing 256m with segment count 400
+ior -a POSIX -w -r -t 256m -s 400 -b 256m -e -F -o ///scratch/tang584/iortest_100gb/ior_256m_100gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_256m_100gb_2.json
+Writing output to ior_256m_100gb_2.json
+vm.drop_caches = 3
+Testing 256m with segment count 400
+ior -a POSIX -w -r -t 256m -s 400 -b 256m -e -F -o ///scratch/tang584/iortest_100gb/ior_256m_100gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_256m_100gb_3.json
+Writing output to ior_256m_100gb_3.json
+vm.drop_caches = 3
+Testing 1024m with segment count 100
+ior -a POSIX -w -r -t 1024m -s 100 -b 1024m -e -F -o ///scratch/tang584/iortest_100gb/ior_1024m_100gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_100gb_1.json
+Writing output to ior_1024m_100gb_1.json
+vm.drop_caches = 3
+Testing 1024m with segment count 100
+ior -a POSIX -w -r -t 1024m -s 100 -b 1024m -e -F -o ///scratch/tang584/iortest_100gb/ior_1024m_100gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_100gb_2.json
+Writing output to ior_1024m_100gb_2.json
+vm.drop_caches = 3
+Testing 1024m with segment count 100
+ior -a POSIX -w -r -t 1024m -s 100 -b 1024m -e -F -o ///scratch/tang584/iortest_100gb/ior_1024m_100gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_100gb_3.json
+Writing output to ior_1024m_100gb_3.json
+vm.drop_caches = 3
+Testing ///scratch/tang584/iortest_300gb
+vm.drop_caches = 3
+Testing 4m with segment count 76800
+ior -a POSIX -w -r -t 4m -s 76800 -b 4m -e -F -o ///scratch/tang584/iortest_300gb/ior_4m_300gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_4m_300gb_1.json
+Writing output to ior_4m_300gb_1.json
+vm.drop_caches = 3
+Testing 4m with segment count 76800
+ior -a POSIX -w -r -t 4m -s 76800 -b 4m -e -F -o ///scratch/tang584/iortest_300gb/ior_4m_300gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_4m_300gb_2.json
+Writing output to ior_4m_300gb_2.json
+vm.drop_caches = 3
+Testing 4m with segment count 76800
+ior -a POSIX -w -r -t 4m -s 76800 -b 4m -e -F -o ///scratch/tang584/iortest_300gb/ior_4m_300gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_4m_300gb_3.json
+Writing output to ior_4m_300gb_3.json
+vm.drop_caches = 3
+Testing 16m with segment count 19200
+ior -a POSIX -w -r -t 16m -s 19200 -b 16m -e -F -o ///scratch/tang584/iortest_300gb/ior_16m_300gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_16m_300gb_1.json
+Writing output to ior_16m_300gb_1.json
+vm.drop_caches = 3
+Testing 16m with segment count 19200
+ior -a POSIX -w -r -t 16m -s 19200 -b 16m -e -F -o ///scratch/tang584/iortest_300gb/ior_16m_300gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_16m_300gb_2.json
+Writing output to ior_16m_300gb_2.json
+vm.drop_caches = 3
+Testing 16m with segment count 19200
+ior -a POSIX -w -r -t 16m -s 19200 -b 16m -e -F -o ///scratch/tang584/iortest_300gb/ior_16m_300gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_16m_300gb_3.json
+Writing output to ior_16m_300gb_3.json
+vm.drop_caches = 3
+Testing 64m with segment count 4800
+ior -a POSIX -w -r -t 64m -s 4800 -b 64m -e -F -o ///scratch/tang584/iortest_300gb/ior_64m_300gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_64m_300gb_1.json
+Writing output to ior_64m_300gb_1.json
+vm.drop_caches = 3
+Testing 64m with segment count 4800
+ior -a POSIX -w -r -t 64m -s 4800 -b 64m -e -F -o ///scratch/tang584/iortest_300gb/ior_64m_300gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_64m_300gb_2.json
+Writing output to ior_64m_300gb_2.json
+vm.drop_caches = 3
+Testing 64m with segment count 4800
+ior -a POSIX -w -r -t 64m -s 4800 -b 64m -e -F -o ///scratch/tang584/iortest_300gb/ior_64m_300gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_64m_300gb_3.json
+Writing output to ior_64m_300gb_3.json
+vm.drop_caches = 3
+Testing 256m with segment count 1200
+ior -a POSIX -w -r -t 256m -s 1200 -b 256m -e -F -o ///scratch/tang584/iortest_300gb/ior_256m_300gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_256m_300gb_1.json
+Writing output to ior_256m_300gb_1.json
+vm.drop_caches = 3
+Testing 256m with segment count 1200
+ior -a POSIX -w -r -t 256m -s 1200 -b 256m -e -F -o ///scratch/tang584/iortest_300gb/ior_256m_300gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_256m_300gb_2.json
+Writing output to ior_256m_300gb_2.json
+vm.drop_caches = 3
+Testing 256m with segment count 1200
+ior -a POSIX -w -r -t 256m -s 1200 -b 256m -e -F -o ///scratch/tang584/iortest_300gb/ior_256m_300gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_256m_300gb_3.json
+Writing output to ior_256m_300gb_3.json
+vm.drop_caches = 3
+Testing 1024m with segment count 300
+ior -a POSIX -w -r -t 1024m -s 300 -b 1024m -e -F -o ///scratch/tang584/iortest_300gb/ior_1024m_300gb_1.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_300gb_1.json
+Writing output to ior_1024m_300gb_1.json
+vm.drop_caches = 3
+Testing 1024m with segment count 300
+ior -a POSIX -w -r -t 1024m -s 300 -b 1024m -e -F -o ///scratch/tang584/iortest_300gb/ior_1024m_300gb_2.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_300gb_2.json
+Writing output to ior_1024m_300gb_2.json
+vm.drop_caches = 3
+Testing 1024m with segment count 300
+ior -a POSIX -w -r -t 1024m -s 300 -b 1024m -e -F -o ///scratch/tang584/iortest_300gb/ior_1024m_300gb_3.bin -O summaryFormat=JSON -O summaryFile=ior_1024m_300gb_3.json
+Writing output to ior_1024m_300gb_3.json
+vm.drop_caches = 3

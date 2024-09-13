@@ -63,10 +63,11 @@ RUN_IOR (){
         FS="$FS/iortest" # add iortest folder to path
         echo "Testing $FS"
         mkdir -p $FS
-        for tsize in 1k 64 1k 2k 4k; do
+        for tsize in 64 2k 4k 8k; do
             echo "Testing $tsize"
 
-            for tasks in 1 5 10 20; do #40 80 160 320; do #1 5 10 20; do #2 3; do # {1..3}
+            for tasks in 1 2 5 10 20 40 80 160 320 #40 80 160 320; do #1 5 10 20; do #2 3; do # {1..3}
+            do 
                 echo "Number of Tasks: $tasks"
                 test_name="ior_${tsize}_n${tasks}"
 

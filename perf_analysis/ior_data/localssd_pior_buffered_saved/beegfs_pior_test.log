@@ -1,0 +1,317 @@
+Testing ///scratch/tang584/iortest_50gb
+vm.drop_caches = 3
+k: tsize_byte=1
+Testing 1k ntask=4
+mpirun -n --oversubscribe 4 ior -a POSIX -w -r -t 1k -s 12800 -e -F -o ///scratch/tang584/iortest_50gb/pior_1k_50gb_n4_1.bin -O summaryFormat=JSON -O summaryFile=pior_1k_50gb_n4_1.json
+Writing output to pior_1k_50gb_n4_1.json
+Writing output to pior_1k_50gb_n4_1.json
+Writing output to pior_1k_50gb_n4_1.json
+Writing output to pior_1k_50gb_n4_1.json
+vm.drop_caches = 3
+k: tsize_byte=1
+Testing 1k ntask=8
+mpirun -n --oversubscribe 8 ior -a POSIX -w -r -t 1k -s 6400 -e -F -o ///scratch/tang584/iortest_50gb/pior_1k_50gb_n8_1.bin -O summaryFormat=JSON -O summaryFile=pior_1k_50gb_n8_1.json
+Writing output to pior_1k_50gb_n8_1.json
+Writing output to pior_1k_50gb_n8_1.json
+Writing output to pior_1k_50gb_n8_1.json
+Writing output to pior_1k_50gb_n8_1.json
+Writing output to pior_1k_50gb_n8_1.json
+Writing output to pior_1k_50gb_n8_1.json
+Writing output to pior_1k_50gb_n8_1.json
+Writing output to pior_1k_50gb_n8_1.json
+vm.drop_caches = 3
+k: tsize_byte=1
+Testing 1k ntask=16
+mpirun -n --oversubscribe 16 ior -a POSIX -w -r -t 1k -s 3200 -e -F -o ///scratch/tang584/iortest_50gb/pior_1k_50gb_n16_1.bin -O summaryFormat=JSON -O summaryFile=pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+Writing output to pior_1k_50gb_n16_1.json
+vm.drop_caches = 3
+k: tsize_byte=1
+Testing 1k ntask=32
+mpirun -n --oversubscribe 32 ior -a POSIX -w -r -t 1k -s 1600 -e -F -o ///scratch/tang584/iortest_50gb/pior_1k_50gb_n32_1.bin -O summaryFormat=JSON -O summaryFile=pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+Writing output to pior_1k_50gb_n32_1.json
+vm.drop_caches = 3
+k: tsize_byte=1
+Testing 1k ntask=64
+mpirun -n --oversubscribe 64 ior -a POSIX -w -r -t 1k -s 800 -e -F -o ///scratch/tang584/iortest_50gb/pior_1k_50gb_n64_1.bin -O summaryFormat=JSON -O summaryFile=pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+Writing output to pior_1k_50gb_n64_1.json
+vm.drop_caches = 3
+k: tsize_byte=1
+Testing 1k ntask=128
+mpirun -n --oversubscribe 128 ior -a POSIX -w -r -t 1k -s 400 -e -F -o ///scratch/tang584/iortest_50gb/pior_1k_50gb_n128_1.bin -O summaryFormat=JSON -O summaryFile=pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+Writing output to pior_1k_50gb_n128_1.json
+vm.drop_caches = 3
+k: tsize_byte=1
+Testing 1k ntask=4
+mpirun -n --oversubscribe 4 ior -a POSIX -w -r -t 1k -s 12800 -e -F -o ///scratch/tang584/iortest_50gb/pior_1k_50gb_n4_2.bin -O summaryFormat=JSON -O summaryFile=pior_1k_50gb_n4_2.json
+Writing output to pior_1k_50gb_n4_2.json
+Writing output to pior_1k_50gb_n4_2.json
+Writing output to pior_1k_50gb_n4_2.json
+Writing output to pior_1k_50gb_n4_2.json
+vm.drop_caches = 3
+k: tsize_byte=1
+Testing 1k ntask=8
+mpirun -n --oversubscribe 8 ior -a POSIX -w -r -t 1k -s 6400 -e -F -o ///scratch/tang584/iortest_50gb/pior_1k_50gb_n8_2.bin -O summaryFormat=JSON -O summaryFile=pior_1k_50gb_n8_2.json
+Writing output to pior_1k_50gb_n8_2.json
+Writing output to pior_1k_50gb_n8_2.json
+Writing output to pior_1k_50gb_n8_2.json
+Writing output to pior_1k_50gb_n8_2.json
+Writing output to pior_1k_50gb_n8_2.json
+Writing output to pior_1k_50gb_n8_2.json
+Writing output to pior_1k_50gb_n8_2.json
+Writing output to pior_1k_50gb_n8_2.json
+vm.drop_caches = 3
+k: tsize_byte=1
+Testing 1k ntask=16
+mpirun -n --oversubscribe 16 ior -a POSIX -w -r -t 1k -s 3200 -e -F -o ///scratch/tang584/iortest_50gb/pior_1k_50gb_n16_2.bin -O summaryFormat=JSON -O summaryFile=pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json
+Writing output to pior_1k_50gb_n16_2.json

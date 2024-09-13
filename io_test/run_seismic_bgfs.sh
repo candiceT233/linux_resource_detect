@@ -1,12 +1,21 @@
-#!/bin/bash
+#!/bin/sh
+#SBATCH --job-name=localssd_pior_test
+#SBATCH --partition=slurm
+#SBATCH --time=8:00:00
+#SBATCH -N 1
+#SBATCH --output=./ior_%x_R.out
+#SBATCH --error=./ior_%x_R.err
+#SBATCH -A oddite
 
 IterDecon_BIN=///qfs/people/tang584/scripts/linux_resource_detect/example_workflow/seismology-workflow/bin
 EXP_DATA_PATH=/rcfs/projects/chess/$USER/seismic_data # BeeGFS
 MSHOCK_DATA_PATH=$EXP_DATA_PATH/MShock
 EGF_INPUT_PATH=$EXP_DATA_PATH/EGF
 
-CONCURRENCY=$1 # test 5 10 20
-INPUT_FILE_NUM=$2
+# CONCURRENCY=$1 # test 5 10 20
+# INPUT_FILE_NUM=$2
+CONCURRENCY=1 # test 5 10 20
+INPUT_FILE_NUM=2
 
 # Check user input
 if [ -z "$CONCURRENCY" ]; then
@@ -40,13 +49,32 @@ echo "Start sG1IterDcon --------------------------------"
 
 num_files="${#all_input_file[@]}"
 
-# Darshan Environment Variables
-export DARSHAN_ENABLE_NONMPI=1
-# export LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so io-test
-# export DARSHAN_LOGHINTS="romio_no_indep_rw=true;cb_nodes=1"
+# # Darshan Environment Variables
+# export DARSHAN_ENABLE_NONMPI=1
+# export DARSHAN_MOD_ENABLE="DXT_POSIX"
+# # export LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so io-test
+# # export DARSHAN_LOGHINTS="romio_no_indep_rw=true;cb_nodes=1"
 # export DXT_ENABLE_IO_TRACE=1
-export DARSHAN_MOD_ENABLE="DXT_POSIX" #DXT_MPIIO
 
+# DATALIFE_LIB_PATH=/qfs/people/tang584/install/datalife/lib/libclient.so
+DATALIFE_LIB_PATH=/qfs/people/tang584/install/datalife/lib/libmonitor.so
+# # datalife monitor env variables
+# export MONITOR_SOCKETS_PER_CONN=0
+# export MONITOR_ENABLE_SHARED_MEMORY=0
+# export MONITOR_SCALABLE_CACHE=0
+# export MONITOR_NETWORK_CACHE=0
+# export MONITOR_PREFETCH_NUM_BLKS=0
+# export MONITOR_PREFETCH_DELTA=0
+# export MONITOR_URL_TIMEOUT=0
+# export MONITOR_DELETE_DOWNLOADS=0
+# export MONITOR_DOWNLOAD_FOR_SIZE=0
+
+# Cleanup previous logs
+TAZER_STAT_LOG=tazer_stat.log
+rm -rf ./*$TAZER_STAT_LOG.log
+DATALIFE_STAT_LOG_FOLDER=/qfs/people/tang584/scripts/linux_resource_detect/io_test/datalife_seism
+mkdir -p $DATALIFE_STAT_LOG_FOLDER
+rm -rf $DATALIFE_STAT_LOG_FOLDER/*
 
 # for t in {1..$}; do
 # for input_file in ${all_input_file[@]}; do
@@ -57,9 +85,12 @@ for ((i = 0; i < num_files; i++)); do
 
     echo "Running input ${input_file}"
 
-    LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so \
-        bash $IterDecon_BIN/sG1IterDecon $MSHOCK_DATA_PATH/${input_file} $EGF_INPUT_PATH/${input_file} &
-    
+    # LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so \
+
+    # datalife-run \
+
+    cd $IterDecon_BIN
+    ./sG1IterDecon $MSHOCK_DATA_PATH/${input_file} $EGF_INPUT_PATH/${input_file} 2>&1 | tee -a iterdecon_${i}_${TAZER_STAT_LOG} #&
     cd $EXP_DATA_PATH
 
     task_num=$(($i + 1))
@@ -80,7 +111,7 @@ for ((i = 0; i < num_files; i++)); do
     input_prefix=$(echo $input_file | cut -d'.' -f1)
 
     echo "Moving output to ${input_prefix}.lht_iter_g1.stf"
-    mv _iter_g1.stf $EXP_DATA_PATH/${input_prefix}.lht_iter_g1.stf
+    mv *_iter_g1.stf $EXP_DATA_PATH/${input_prefix}.lht_iter_g1.stf
     cd $EXP_DATA_PATH
     rm -rf run_$input_file
 done
@@ -92,11 +123,18 @@ time_2=$(($(date +%s%N)/1000000))
 echo "Start siftSTFByMisfit.py --------------------------------"
 
 # Get all .stf files in the directory #EXP_DATA_PATH into a string
-file_str=$(ls $EXP_DATA_PATH | grep ".stf" | tr '\n' ' ')
+file_str=$(ls $EXP_DATA_PATH/*.stf | tr '\n' ' ')
 # echo "Files: $file_str"
 
 set -x
-python $IterDecon_BIN/siftSTFByMisfit.py $file_str
+
+# LD_PRELOAD=/qfs/people/tang584/install/darshan_runtime/lib/libdarshan.so \
+
+
+
+# datalife-run \
+python3 $IterDecon_BIN/siftSTFByMisfit.py $file_str 2>&1 | tee -a sift_${TAZER_STAT_LOG}
+
 set +x
 
 time_3=$(($(date +%s%N)/1000000))
@@ -112,5 +150,17 @@ hostname
 
 # Check if the output files are generated
 set -x
-ls -l $EXP_DATA_PATH | grep ".stf" | wc -l
-ls -l $EXP_DATA_PATH | grep "good-fit" | wc -l
+# ls -l $EXP_DATA_PATH | grep ".stf" | wc -l
+ls -l $EXP_DATA_PATH | grep "good-fit" | wc -l | tee a sift_${TAZER_STAT_LOG}
+du -k $EXP_DATA_PATH/*.stf | tee a sift_${TAZER_STAT_LOG}
+
+mv ./*$TAZER_STAT_LOG.log $DATALIFE_STAT_LOG_FOLDER/
+mv $MSHOCK_DATA_PATH/*_trace_stat $DATALIFE_STAT_LOG_FOLDER/
+mv $EGF_INPUT_PATH/*_trace_stat $DATALIFE_STAT_LOG_FOLDER/
+
+
+# 1 2
+## Without Datalife
+# Duration sG1IterDcon: 9644 ms [9.64 sec]
+# Duration siftSTFByMisfit.py: 550 ms [.55 sec
+## Witj Datalife
