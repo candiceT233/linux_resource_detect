@@ -1,6 +1,9 @@
 example_workflow/
 test_log/
 io_test/
+perf_analysis/1kgenome_data
+perf_analysis/ior_data
 !*.py
 !*.sh
 *.csv
+*.json
