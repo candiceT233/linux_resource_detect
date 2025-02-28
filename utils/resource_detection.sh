@@ -142,17 +142,20 @@ FIXME: Using dd to test storage bandwidth is not accurate
 
 COMMENT
 
-    block_size=1M ## TODO: is 4KB a fair test here? 4K
-    [ $LOG_LEVEL -eq 1 ] && echo "Testing I/O bandwidth with block size $block_size..."
+    block_size=64K ## TODO: is 4KB a fair test here? 4K 64KB 1M
+    block_kb=64
+    io_count=16384 # 1000
+    total_file_size_mb=$(( (block_kb * io_count) / 1024 ))  # Convert total size to MB
+    [ $LOG_LEVEL -eq 1 ] && echo "Testing I/O bandwidth with block_size[$block_size] total_file_size_mb[$total_file_size_mb] ..."
 
     for dir in "${!all_directories[@]}"; do
         
         # Test write time and bandwidth
-        write_output="$(dd if=/dev/zero of=$dir/testfile bs=$block_size count=1000 oflag=dsync 2>&1)"
+        write_output="$(dd if=/dev/zero of=$dir/testfile bs=$block_size count=$io_count oflag=dsync 2>&1)"
         write_output=$(echo "$write_output" | tail -n 1 | sed 's/([^)]*) copied/copied/') # | sed -n 's/.*(\(.*\)).*/\1/p'
 
         # Test read time and bandwidth
-        read_output="$(dd if=$dir/testfile of=/dev/null bs=$block_size count=1000 iflag=dsync 2>&1)"
+        read_output="$(dd if=$dir/testfile of=/dev/null bs=$block_size count=$io_count iflag=dsync 2>&1)"
         read_output=$(echo "$read_output" | tail -n 1 | sed 's/([^)]*) copied/copied/')
         # [ $LOG_LEVEL -eq 1 ] && echo "read_output: $read_output"
 
