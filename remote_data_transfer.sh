@@ -188,7 +188,7 @@ EXECUTE_RESOURCE_DETECTION () {
 if [ -f "$DIR_CONFIG_FILE" ] && [ -s "$DIR_CONFIG_FILE" ]; then
     echo "Skipping resource detection..."
 else
-    EXECUTE_RESOURCE_DETECTION
+    EXECUTE_RESOURCE_DETECTION | tee resource_dicovery.log
 fi
 
 
